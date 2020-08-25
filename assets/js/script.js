@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearTimeout(markAI);
         clearInterval(currentGame);
         resetCards();
-        word.innerHTML = "Lingo Bingo";
+        word.innerHTML = "Start New Game";
         timer.innerHTML = 5;
     }
 
