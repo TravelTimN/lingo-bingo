@@ -164,6 +164,148 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    settingsBtn.addEventListener("click", () => {
+        resetGame();
+    });
+    // reset game
+    function resetGame() {
+        confetti.stop(); // stop confetti
+        score = 1000;
+        scoreSpan.innerHTML = 1000;
+        bingoBtn.classList.add("disabled");
+        activeGame = false;
+        userWon = false;
+        aiWon = false;
+        userCards = [];
+        aiCards = [];
+        answerList = [];
+        cardList = [];
+        clearInterval(cardInterval);
+        clearTimeout(markAI);
+        clearInterval(currentGame);
+        resetCards();
+        word.innerHTML = "Lingo Bingo";
+        timer.innerHTML = 5;
+    }
+
+    
+    // stop game
+    function stopGame() {
+        bingoBtn.classList.add("disabled");
+        activeGame = false;
+        clearInterval(cardInterval);
+        clearInterval(currentGame);
+        confetti.stop();
+        if (userWon) {
+            console.log("User Won");
+            confetti.start(5000);
+        } else if (aiWon) {
+            console.log("AI won");
+        }
+    }
+
+
+    // reset all cards (user and AI)
+    function resetCards() {      
+        userEmojiCards = document.querySelectorAll("#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        userEmojiCards.forEach((card) => {
+            card.parentNode.parentNode.classList.remove("flipped"); // unflip cards
+            card.parentNode.classList.remove("correct"); // remove 'correct' class
+            card.parentNode.classList.remove("winning-tiles"); // remove 'winning-tiles' class
+        });
+        aiEmojiCards = document.querySelectorAll("#ai-grid .emoji-card");
+        aiEmojiCards.forEach((card) => {
+            card.classList.remove("correct"); // remove 'correct' class
+            card.classList.remove("winning-tiles"); // remove 'winning-tiles' class
+        });
+    }
+
+
+    // helper: get random number of items from array
+    // https://stackoverflow.com/a/19270021
+    function getRandomCards(array, num) {
+        let result = new Array(num);
+        let len = array.length;
+        let selectedCards = new Array(len);
+        while (num--) {
+            let card = Math.floor(Math.random() * len);
+            result[num] = array[card in selectedCards ? selectedCards[card] : card];
+            selectedCards[card] = --len in selectedCards ? selectedCards[len] : len;
+        }
+        return result;
+    }
+
+
+    // helper: populate grid
+    function populateCards(array, grid) {
+        let cards = document.querySelectorAll(grid);
+        let i = 0;
+        cards.forEach((card) => {
+            // use emoji in HTML: https://www.kirupa.com/html5/emoji.htm
+            if (grid === "#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
+                card.innerText = String.fromCodePoint(array[i].emoji.replace("U+", "0x"));
+            }
+            card.setAttribute("aria-label", array[i].aria);
+            card.setAttribute("data-emoji", array[i].word);
+            i++;
+        });
+        flipCards(cards, grid);
+        
+    }
+
+
+    // flip each card with slight delay each
+    // https://stackoverflow.com/a/41924097
+    function flipCards(cards, grid) {
+        let cardIndex = 0;
+        cardInterval = setInterval(() => {
+            if (cardIndex != cards.length && activeGame) {
+                if (grid === "#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
+                    cards[cardIndex++].parentNode.parentNode.classList.add("flipped");
+                }
+            } else {
+                clearInterval(cardInterval);
+                cardIndex = 0;
+            }
+        }, 150);
+    }
+
+
+    // game logic
+    // function every 5 seconds to pull item from 'cardList' array
+    function populateAnswerList(lang) {
+        if (cardList.length === 0) {
+            clearInterval(currentGame);
+            aiWon = true;
+            stopGame();
+        } else {
+            answerList.push(cardList[0]); // push each word per round into an answerList
+            wordSpan.innerHTML = cardList[0][lang];
+            spokenWord = cardList[0][lang];
+            // verbalize spoken word if available
+            if (mutedLangs.indexOf(lang) < 0 && audio.innerHTML != "🔇") {
+                speakWord(spokenWord, lang);
+            }
+            autocompleteAIgrid(cardList[0]); // function to fill-out AI grid
+            cardList.shift(); // remove first item from cardList to avoid dupes
+        }
+    }
+
+
+    // helper: function to fill-out AI grid
+    function autocompleteAIgrid(word) {
+        if (aiCards.includes(word)) {
+            // https://stackoverflow.com/a/13449757
+            let aiCard = document.querySelector(`#ai-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji[data-emoji~="${word.word}"]`);
+            // give a delay to allow user to guess first in case of tie
+            markAI = setTimeout(() => {
+                aiCard.parentNode.parentNode.parentNode.classList.add("correct");
+                checkCards("ai", gameStyle);
+            }, 4500);
+        }
+    }
+
+
 
 
 
