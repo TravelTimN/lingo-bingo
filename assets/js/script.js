@@ -106,6 +106,64 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // game logic: function for language selection
+    function languageSelection(flag) {
+        languageList.addEventListener("change", () => {
+            selectedLanguage = languageList.options[languageList.selectedIndex].value;
+            flag.src = `assets/svg/${selectedLanguage}.svg`;
+            document.querySelector("link#favicon").href = `assets/svg/${selectedLanguage}.svg`;
+            // change audio emoji if a muted-language and disable it
+            if (mutedLangs.indexOf(selectedLanguage) >= 0) {
+                audio.innerHTML = "🔇";
+                audio.style.pointerEvents = "none";
+            } else {
+                audio.style.pointerEvents = "auto";
+            }
+        });
+    }
+    
+    // game logic: flag selection
+    flagSelection();
+    function flagSelection() {
+        flags.forEach((flag) => {
+            flag.src = `assets/svg/gb.svg`;
+            languageSelection(flag);
+        });
+    }
+    
+    
+    // game logic: start button
+    startBtn.addEventListener("click", () => {
+        selectedGame(gameStyleList);
+        startGame();
+    });
+
+
+    // game logic: start game
+    function startGame() {
+        word.innerHTML = "... LOADING GAME ...";
+        settingsModal.style.display = "none"; // close settingsModal
+        selectedLanguage = languageList.options[languageList.selectedIndex].value;
+        // start the game/words and timer
+        currentGame = setInterval(() => {
+            populateAnswerList(selectedLanguage);
+            gameTimer();
+        }, 5000);
+        // game logic: generate emoji list for user and AI
+        userCards = getRandomCards(allCards, 25);
+        aiCards = getRandomCards(allCards, 25);
+        // cardList = getRandomCards(allCards, 3); // testing shorter games
+        cardList = getRandomCards(allCards, allCards.length);
+        // game logic: populate the boards
+        populateCards(userCards, "#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        populateCards(aiCards, "#ai-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        activeGame = true; // game is now active
+        setTimeout(() => {
+            if (activeGame) bingoBtn.classList.remove("disabled"); // enable the Bingo button once cards are ready
+        }, 5000);
+    }
+
+
 
 
 
