@@ -378,6 +378,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // user click event
+    // NON-TEST! FIX: this should be in a function instead
+    userCardsList = document.querySelectorAll("#user-grid .emoji-card .emoji-card-inner .emoji-card-back");
+    userCardsList.forEach((card) => {
+        card.addEventListener("click", () => {
+            if(activeGame) { // only if the game is active
+                // https://stackoverflow.com/a/8217584
+                // check if clicked card exists inside of the answerList[]
+                if (answerList.some(word => word.word === card.firstElementChild.dataset.emoji)) {
+                    score += 250; // add 250pts (correct)
+                    userCheck("correct", card);
+                } else {
+                    score -= 250; // deduct 250pts (incorrect)
+                    userCheck("incorrect", card);
+                }
+                scoreSpan.innerHTML = score;
+            }
+        });
+    });
+
+
+    // game function: user correct vs incorrect
+    function userCheck(answer, card) {
+        card.classList.add(answer);
+        scoreSpan.classList.add(answer);
+        setTimeout(() => {
+            // remove temporary color
+            scoreSpan.classList.remove(answer);
+            if (answer == "incorrect") card.classList.remove(answer);
+        }, 1000);
+    }
+
+
+    // game function: user clicks to check for Bingo
+    bingoBtn.addEventListener("click", () => {
+        checkCards("user", gameStyle);
+    });
+
+
+    // settingsModal
+    settingsBtn.addEventListener("click", () => {
+        settingsModal.style.display = "block";
+    });
+    newGameBtn.addEventListener("click", () => {
+        settingsModal.style.display = "block";
+        resetGame();
+    });
+    // close modals
+    modalClose.forEach((close) => {
+        close.addEventListener("click", () => {
+            modals.forEach((modal) => {
+                modal.style.display = "none";
+            });
+        });
+    });
+    window.addEventListener("click", (e) => {
+        if (e.target == settingsModal) {
+            settingsModal.style.display = "none";
+        }
+    });
+
+
 
 
 
