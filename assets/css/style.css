@@ -300,3 +300,161 @@ div[id*="stats-"]:not(#stats-ai) span {
     vertical-align: middle;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
+
+
+
+
+
+
+
+#ai-grid {
+    display: grid;
+    grid-template-columns: repeat(5, calc(var(--card) / 2));
+    gap: 5px;
+}
+
+#ai-grid .emoji-card {
+    height: calc(var(--card) / 2);
+    width: calc(var(--card) / 2);
+    border-radius: 4px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.5);
+    background: repeating-linear-gradient(45deg,
+            #616161,
+            #616161 10px,
+            #9E9E9E 10px,
+            #9E9E9E 20px);
+}
+
+#ai-grid .emoji-card.correct {
+    background: repeating-linear-gradient(45deg,
+            #4CAF50,
+            #4CAF50 10px,
+            #C8E6C9 10px,
+            #C8E6C9 20px);
+}
+
+
+
+
+#user-grid .emoji-card .emoji-card-inner .emoji-card-back.correct.winning-tiles {
+    animation: pulseUser 2s ease-out infinite;
+}
+
+@keyframes pulseUser {
+    0%, 100% {background-color: #FFFF00;}
+    50% {background-color: #4CAF50;}
+}
+
+#ai-grid .emoji-card.correct.winning-tiles {
+    animation: blinkAI 2s ease-out infinite;
+}
+
+@keyframes blinkAI {
+    0%, 100% {background: repeating-linear-gradient(45deg,
+            #4CAF50,
+            #4CAF50 10px,
+            #FFFF00 10px,
+            #FFFF00 20px);}
+    50% {background: repeating-linear-gradient(45deg,
+            #4CAF50,
+            #4CAF50 10px,
+            #C8E6C9 10px,
+            #C8E6C9 20px);}
+}
+
+
+
+
+
+
+
+
+footer {
+    grid-area: footer;
+    width: 100%;
+    background-color: rgba(33, 150, 243, 0.5);
+    background: linear-gradient(90deg, rgba(33,150,243,1) 25%, rgba(187,222,251,1) 50%, rgba(33,150,243,1) 75%);
+}
+
+footer nav {
+    text-align: center;
+    align-self: center;
+    justify-items: center;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+footer nav .emoji {
+    cursor: pointer;
+}
+
+
+
+
+/* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_modal_bottom */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.75);
+    animation-name: fadeIn;
+    animation-duration: 0.4s
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    width: 80%;
+    height: 80%;
+    animation-name: slideIn;
+    animation-duration: 0.4s
+}
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+    padding: 2px 16px;
+    background-color: #2196F3;
+    color: white;
+    height: 20%;
+}
+
+.modal-body {
+    padding: 2px 16px;
+    height: 60%;
+}
+
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #2196F3;
+    color: white;
+    height: 20%;
+}
+
+@keyframes slideIn {
+    from {bottom: -300px; opacity: 0;}
+    to {bottom: 0; opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
