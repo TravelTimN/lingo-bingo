@@ -1,5 +1,7 @@
 :root {
+    --green: 76, 175, 80; /*#4CAF50*/
     --blueL5: 227, 242, 253; /*#E3F2FD*/
+    --blueD4: 13, 71, 161; /*#0D47A1*/
     --white: 255, 255, 255; /*#FFFFFF*/
     --greyD3: 66, 66, 66; /*#424242*/
     --black: 0, 0, 0; /*#000000*/
@@ -27,6 +29,7 @@
 
 body {
     font-family: "Segoe UI", Roboto, "Open Sans", "Helvetica Neue", sans-serif;
+    /* overflow-x: hidden; */
     height: 100vh;
     width: 100vw;
     display: grid;
@@ -53,7 +56,7 @@ header #logo {
     grid-area: logo;
     margin: 0;
     padding: 0;
-    color: #0D47A1; 
+    color: rgba(var(--blueD4), 1); 
     letter-spacing: 3px;
     text-transform: uppercase;
     text-shadow: 0px 2px 2px #bbdefb, 0px -2px 2px #bbdefb, 1px 1px 0px #fff, 2px 2px 4px rgba(0, 0, 0, 0.95);
@@ -65,6 +68,7 @@ header img {
 }
 
 main {
+    width: 100%;
     grid-area: main;
     display: grid;
     padding: 1em 0;
@@ -73,49 +77,56 @@ main {
         ". user . stats .";
 }
 
-section#user {
-    grid-area: user;
-}
+section#user {grid-area: user;}
+section#stats #grid-goal {grid-area: grid-goal;}
+section#stats #stats-word {grid-area: stats-word;}
+section#stats #stats-score {grid-area: stats-score; border: 1px solid black; width: 100%;}
+section#stats #stats-timer {grid-area: stats-timer; border: 1px solid black; width: 100%;}
+section#stats #stats-username {grid-area: stats-username; border: 1px solid black; width: 100%;}
+section#stats #stats-game {grid-area: stats-game;}
+section#stats #stats-new {grid-area: stats-new; width: 100%;}
+section#stats #stats-bingo {grid-area: stats-bingo; width: 100%;}
 
 section#stats {
     width: 100%;
     grid-area: stats;
     display: grid;
     text-align: center;
-    /* justify-content: center; */
     align-items: center;
-    grid-template-rows: 1fr auto;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
     grid-template-areas:
-        "stats-info"
-        "stats-ai";
+        "stats-new stats-word stats-word stats-word stats-word"
+        "stats-bingo stats-game stats-game grid-goal grid-goal"
+        "stats-timer ai-grid ai-grid ai-grid ai-grid"
+        "stats-score ai-grid ai-grid ai-grid ai-grid"
+        "stats-username ai-grid ai-grid ai-grid ai-grid";
 }
 
-section#stats aside#stats-info {
-    width: 100%;
-    height: 100%;
+
+#grid-goal {
+    grid-area: ai-grid;
     display: grid;
-    grid-template-areas:
-        "stats-word stats-word"
-        "stats-score stats-timer"
-        "stats-username stats-game"
-        "stats-new stats-bingo";
+    grid-template-columns: repeat(5, calc(var(--card) / 6));
+    gap: 5px;
 }
 
-section#stats aside#stats-info #stats-word {grid-area: stats-word;}
-section#stats aside#stats-info #stats-score {grid-area: stats-score;}
-section#stats aside#stats-info #stats-timer {grid-area: stats-timer;}
-section#stats aside#stats-info #stats-username {grid-area: stats-username;}
-section#stats aside#stats-info #stats-game {grid-area: stats-game;}
-section#stats aside#stats-info #stats-new {grid-area: stats-new;}
-section#stats aside#stats-info #stats-bingo {grid-area: stats-bingo;}
+#grid-goal .emoji-card {
+    height: calc(var(--card) / 6);
+    width: calc(var(--card) / 6);
+    /* border-radius: 2px; */
+    border: 1px solid rgba(var(--black), 1);
+    /* background: rgba(var(--black), 0); */
+}
 
-section#stats aside#stats-ai {
-    /* width: 100%; */
+
+button:not(#start) {
+    width: 100%;
 }
 
 button {
     cursor: pointer;
-    background: #4CAF50;
+    background: rgba(var(--green), 1);
     color: #FFFFFF;
     font-size: 1em;
     font-weight: bold;
@@ -124,16 +135,16 @@ button {
     border: 5px solid #fff;
     outline: transparent;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 0 4px #4CAF50, 2px 1px 6px 4px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 3px rgba(var(--green), 1);
     transition: all 0.15s ease-in-out;
 }
 
 button:hover {
-    color: #4CAF50;
+    color: rgba(var(--green), 1);
     background: transparent;
     text-shadow: none;
-    border: 5px solid #4CAF50;
-    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+    border: 3px solid rgba(var(--green), 1);
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
 }
 
 button:active {
@@ -148,14 +159,9 @@ select {
 
 .disabled {
     background-color: lightgrey;
-    box-shadow: 0 0 0 4px lightgrey, 2px 1px 6px 4px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px lightgrey;
     pointer-events: none;
 }
-
-/* #stats {
-    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22);
-    border-radius: var(--borderRadius);
-} */
 
 div[id*="stats-"]:not(#stats-ai):not(#stats-new):not(#stats-bingo) {
     /* margin: 0 5px; */ /* either this */
@@ -173,9 +179,8 @@ div[id*="stats-"]:not(#stats-ai) span {
     /* width: 100%; */
     line-height: 2;
     letter-spacing: 2px;
-    color: #0D47A1;
+    color: rgba(var(--blueD4), 1);
     text-shadow: 1px 1px 1px white, 2px 2px 2px rgba(0, 0, 0, 0.5);
-    /* box-shadow: 0 0 6px 0 rgb(13, 71, 161, 0.5); */
     font-size: x-large !important;
 }
 
@@ -190,7 +195,7 @@ div[id*="stats-"]:not(#stats-ai) span {
 
 *::selection {background-color: transparent;}
 
-#score.correct {color: #4CAF50;}
+#score.correct {color: rgba(var(--green), 1);}
 #score.incorrect {color: #F44336;}
 
 .emoji-card { /* applies to user and AI */
@@ -254,12 +259,12 @@ div[id*="stats-"]:not(#stats-ai) span {
 #user-grid .emoji-card .emoji-card-inner .emoji-card-back:hover { /* applies to user only */
     cursor: pointer;
     border-radius: var(--borderRadius);
-    box-shadow: 0 0 8px 5px rgba(0, 0, 0, 1);
+    box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
 }
 
 /* user has correct card */
 #user-grid .emoji-card .emoji-card-inner .emoji-card-back.correct {
-    background-color: #4CAF50;
+    background-color: rgba(var(--green), 1);
     border-radius: var(--borderRadius);
     cursor: default;
     pointer-events: none;
@@ -308,6 +313,7 @@ div[id*="stats-"]:not(#stats-ai) span {
 
 
 #ai-grid {
+    grid-area: ai-grid;
     display: grid;
     grid-template-columns: repeat(5, calc(var(--card) / 2));
     gap: 5px;
@@ -327,8 +333,8 @@ div[id*="stats-"]:not(#stats-ai) span {
 
 #ai-grid .emoji-card.correct {
     background: repeating-linear-gradient(45deg,
-            #4CAF50,
-            #4CAF50 10px,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1) 10px,
             #C8E6C9 10px,
             #C8E6C9 20px);
 }
@@ -342,7 +348,7 @@ div[id*="stats-"]:not(#stats-ai) span {
 
 @keyframes pulseUser {
     0%, 100% {background-color: #FFFF00;}
-    50% {background-color: #4CAF50;}
+    50% {background-color: rgba(var(--green), 1);}
 }
 
 #ai-grid .emoji-card.correct.winning-tiles {
@@ -351,13 +357,13 @@ div[id*="stats-"]:not(#stats-ai) span {
 
 @keyframes blinkAI {
     0%, 100% {background: repeating-linear-gradient(45deg,
-            #4CAF50,
-            #4CAF50 10px,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1)0 10px,
             #FFFF00 10px,
             #FFFF00 20px);}
     50% {background: repeating-linear-gradient(45deg,
-            #4CAF50,
-            #4CAF50 10px,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1) 10px,
             #C8E6C9 10px,
             #C8E6C9 20px);}
 }
