@@ -1,0 +1,302 @@
+:root {
+    --blueL5: 227, 242, 253; /*#E3F2FD*/
+    --white: 255, 255, 255; /*#FFFFFF*/
+    --greyD3: 66, 66, 66; /*#424242*/
+    --black: 0, 0, 0; /*#000000*/
+    --card: calc(80vh / 6);
+    --borderRadius: 8px;
+    /* --neumorphLD: 193, 206, 215; */ /*#C1CED7*/
+    /* --neumorphL: rgba(var(--blueL5), 1); */
+    /* --neumorphBoxL: calc(var(--borderRadius)/2) calc(var(--borderRadius)/2) var(--borderRadius) rgba(var(--neumorphLD), 1), calc(-1*(var(--borderRadius)/2)) calc(-1*(var(--borderRadius)/2)) var(--borderRadius) rgba(var(--white), 1); */
+    /* --neumorphHoverL: inset calc(var(--borderRadius)/2) calc(var(--borderRadius)/2) var(--borderRadius) rgba(var(--neumorphLD), 1), inset calc(-1*(var(--borderRadius)/2)) calc(-1*(var(--borderRadius)/2)) var(--borderRadius) rgba(var(--white), 1); */
+    /* --neumorphDD: 56, 56, 56; */ /*#383838*/
+    /* --neumorphDL: 76, 76, 76; */ /*#4C4C4C*/
+    /* --neumorphD: rgba(var(--greyD3), 1); */
+    /* --neumorphBoxD: calc(var(--borderRadius)/2) calc(var(--borderRadius)/2) var(--borderRadius) rgba(var(--neumorphDD), 1), calc(-1*(var(--borderRadius)/2)) calc(-1*(var(--borderRadius)/2)) var(--borderRadius) rgba(var(--neumorphDD), 1); */
+    /* --neumorphHoverD: inset calc(var(--borderRadius)/2) calc(var(--borderRadius)/2) var(--borderRadius) rgba(var(--neumorphDD), 1), inset calc(-1*(var(--borderRadius)/2)) calc(-1*(var(--borderRadius)/2)) var(--borderRadius) rgba(var(--neumorphDD), 1); */
+}
+
+* {
+    margin: 0 auto;
+    padding: 0;
+    -webkit-tap-highlight-color: rgba(var(--black), 0);
+    -webkit-tap-highlight-color: transparent;
+}
+
+*, *::after, *::before {box-sizing: border-box;}
+
+body {
+    font-family: "Segoe UI", Roboto, "Open Sans", "Helvetica Neue", sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-areas:
+        "header"
+        "main"
+        "footer";
+}
+
+a {outline: none;}
+
+header {
+    width: 100%;
+    display: grid;
+    grid-area: header;
+    grid-template-columns: 1fr auto 15px auto 1fr;
+    grid-template-areas:
+        ". logo . flag .";
+    background-color: rgba(33, 150, 243, 0.5);
+    background: linear-gradient(90deg, rgba(33,150,243,1) 25%, rgba(187,222,251,1) 50%, rgba(33,150,243,1) 75%);
+}
+
+header #logo {
+    grid-area: logo;
+    margin: 0;
+    padding: 0;
+    color: #0D47A1; 
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0px 2px 2px #bbdefb, 0px -2px 2px #bbdefb, 1px 1px 0px #fff, 2px 2px 4px rgba(0, 0, 0, 0.95);
+}
+
+header img {
+    grid-area: flag;
+    align-self: center;
+}
+
+main {
+    grid-area: main;
+    display: grid;
+    padding: 1em 0;
+    grid-template-columns: 1em 1fr 5em 1fr 1em;
+    grid-template-areas:
+        ". user . stats .";
+}
+
+section#user {
+    grid-area: user;
+}
+
+section#stats {
+    width: 100%;
+    grid-area: stats;
+    display: grid;
+    text-align: center;
+    /* justify-content: center; */
+    align-items: center;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+        "stats-info"
+        "stats-ai";
+}
+
+section#stats aside#stats-info {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+        "stats-word stats-word"
+        "stats-score stats-timer"
+        "stats-username stats-game"
+        "stats-new stats-bingo";
+}
+
+section#stats aside#stats-info #stats-word {grid-area: stats-word;}
+section#stats aside#stats-info #stats-score {grid-area: stats-score;}
+section#stats aside#stats-info #stats-timer {grid-area: stats-timer;}
+section#stats aside#stats-info #stats-username {grid-area: stats-username;}
+section#stats aside#stats-info #stats-game {grid-area: stats-game;}
+section#stats aside#stats-info #stats-new {grid-area: stats-new;}
+section#stats aside#stats-info #stats-bingo {grid-area: stats-bingo;}
+
+section#stats aside#stats-ai {
+    /* width: 100%; */
+}
+
+button {
+    cursor: pointer;
+    background: #4CAF50;
+    color: #FFFFFF;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: var(--borderRadius);
+    border: 5px solid #fff;
+    outline: transparent;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px #4CAF50, 2px 1px 6px 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.15s ease-in-out;
+}
+
+button:hover {
+    color: #4CAF50;
+    background: transparent;
+    text-shadow: none;
+    border: 5px solid #4CAF50;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+}
+
+button:active {
+    box-shadow: none;
+}
+
+select {
+    cursor: pointer;
+}
+
+.bold {font-weight: bold;}
+
+.disabled {
+    background-color: lightgrey;
+    box-shadow: 0 0 0 4px lightgrey, 2px 1px 6px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+/* #stats {
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.22);
+    border-radius: var(--borderRadius);
+} */
+
+div[id*="stats-"]:not(#stats-ai):not(#stats-new):not(#stats-bingo) {
+    /* margin: 0 5px; */ /* either this */
+    /* width: 100%; */ /* or this */
+    align-self: center;
+    border-radius: var(--borderRadius);
+    /* box-shadow: 0 0 6px 0 rgb(13, 71, 161, 0.5); */
+}
+
+div[id*="stats-"]:not(#stats-ai) span {
+    font-size: large;
+}
+
+#stats-word {
+    /* width: 100%; */
+    line-height: 2;
+    letter-spacing: 2px;
+    color: #0D47A1;
+    text-shadow: 1px 1px 1px white, 2px 2px 2px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 0 6px 0 rgb(13, 71, 161, 0.5); */
+    font-size: x-large !important;
+}
+
+.flag {
+    width: 2.5em;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.16), 0 4px 6px rgba(0, 0, 0, 0.45);
+}
+
+
+
+*::selection {background-color: transparent;}
+
+#score.correct {color: #4CAF50;}
+#score.incorrect {color: #F44336;}
+
+.emoji-card { /* applies to user and AI */
+    background-color: transparent;
+    perspective: 1000px;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+
+#user-grid {
+    display: grid;
+    grid-template-columns: repeat(5, var(--card));
+    gap: 10px;
+    justify-content: center;
+}
+
+#user-grid .emoji-card-front { /* applies to user only */
+    font-size: 2em;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-shadow: 3px 3px 3px #000000;
+    line-height: 2.5;
+    height: var(--card);
+    border-radius: var(--borderRadius);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+    background: repeating-linear-gradient(-45deg,
+            #2196F3,
+            #2196F3 15px,
+            #BBDEFB 15px,
+            #BBDEFB 30px);
+}
+
+#user-grid .emoji-card-inner { /* applies to user only */
+    position: relative;
+    width: var(--card);
+    height: var(--card);
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+#user-grid .emoji-card .emoji-card-inner.flipped { /* applies to user only */
+    transform: rotateY(180deg);
+}
+
+#user-grid .emoji-card-front,
+#user-grid .emoji-card-back { /* applies to user only */
+    position: absolute;
+    width: var(--card);
+    height: var(--card);
+    backface-visibility: hidden;
+}
+
+#user-grid .emoji-card-back { /* applies to user only */
+    transform: rotateY(180deg);
+    border-radius: var(--borderRadius);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+}
+
+#user-grid .emoji-card .emoji-card-inner .emoji-card-back:hover { /* applies to user only */
+    cursor: pointer;
+    border-radius: var(--borderRadius);
+    box-shadow: 0 0 8px 5px rgba(0, 0, 0, 1);
+}
+
+/* user has correct card */
+#user-grid .emoji-card .emoji-card-inner .emoji-card-back.correct {
+    background-color: #4CAF50;
+    border-radius: var(--borderRadius);
+    cursor: default;
+    pointer-events: none;
+}
+
+/* user has incorrect card | wiggle effect : https://stackoverflow.com/a/15991184 */
+#user-grid .emoji-card .emoji-card-inner .emoji-card-back.incorrect {
+    background-color: #F44336;
+    border-radius: var(--borderRadius);
+    animation: shake 0.5s linear;
+}
+@keyframes shake {
+    8%, 41% {transform: translateX(-10px) rotateY(180deg);}
+    25%, 58% {transform: translateX(10px) rotateY(180deg);}
+    75% {transform: translateX(-5px) rotateY(180deg);}
+    92% {transform: translateX(5px) rotateY(180deg);}
+    0%, 100% {transform: translateX(0) rotateY(180deg);}
+}
+
+/* user has incorrect Bingo */
+#user-grid.incorrect .emoji-card {
+    border-radius: var(--borderRadius);
+    box-shadow: 0 0 4px 4px #F44336;
+    animation: shakeBoard 0.5s linear;
+}
+@keyframes shakeBoard {
+    8%, 41% {transform: translateX(-10px);}
+    25%, 58% {transform: translateX(10px);}
+    75% {transform: translateX(-5px);}
+    92% {transform: translateX(5px);}
+    0%, 100% {transform: translateX(0);}
+}
+
+.emoji {
+    outline: none;
+    font-size: 3.5em;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    vertical-align: middle;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
