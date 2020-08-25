@@ -306,6 +306,78 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // helper: speak the word if available
+    function speakWord(word, lang) {
+        if ("speechSynthesis" in window) {
+            // synthesis supported
+            msg = new SpeechSynthesisUtterance();
+            switch (lang) {
+                case "gb":
+                    msgVoice = voices[4];
+                    msgLang = "en-GB";
+                    break;
+                case "de":
+                    msgVoice = voices[2];
+                    msgLang = "de-DE";
+                    break;
+                case "mx":
+                    msgVoice = voices[7];
+                    msgLang = "es-US";
+                    break;
+                case "fr":
+                    msgVoice = voices[8];
+                    msgLang = "fr-FR";
+                    break;
+                case "it":
+                    msgVoice = voices[11];
+                    msgLang = "it-IT";
+                    break;
+                case "nl":
+                    msgVoice = voices[14];
+                    msgLang = "nl-NL";
+                    break;
+                case "pl":
+                    msgVoice = voices[15];
+                    msgLang = "pl-PL";
+                    break;
+                case "pt":
+                    msgVoice = voices[16];
+                    msgLang = "pt-BR";
+                    break;
+            }
+            msg.voice = msgVoice;
+            msg.text = word.toString();
+            msg.lang = msgLang.toString();
+            speechSynthesis.speak(msg);
+        } else {
+            alert("No SpeechSynthesis Available");
+            audio.innerHTML = "&#x1F507";
+        }
+    }
+
+
+    // toggle mute emoji
+    audio.addEventListener("click", () => {
+        audio.innerHTML = (audio.innerHTML == "🔊") ? "&#x1F507" : "&#x1F50A";
+    });
+
+
+    // game logic: timer repeats unless last word or inactive game
+    function gameTimer() {
+        let time = 4;
+        let timeInterval;
+        timer.innerHTML = 5;
+        timeInterval = setInterval(() => {
+            if (time >= 1 && cardList.length >= 0 && activeGame) {
+                timer.innerHTML = time;
+                time--;
+            } else {
+                clearInterval(timeInterval);
+            }
+        }, 1000);
+    }
+
+
 
 
 
