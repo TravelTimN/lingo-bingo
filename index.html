@@ -64,6 +64,50 @@
     </footer>
 
 
+    <!-- settings modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Game Settings</h2>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="" class="flag">
+                <select name="language" id="language">
+                    <option value="cn" disabled>Chinese Mandarin (普通话 - 中国大陆)</option>
+                    <option value="nl">Dutch (Nederlands)</option>
+                    <option value="gb" selected>English</option>
+                    <option value="fr">French (Français)</option>
+                    <option value="de">German (Deutsch)</option>
+                    <option value="in" disabled>Hindi (हिन्दी)</option>
+                    <option value="ie">Irish Gaelic (Gaeilge)</option>
+                    <option value="it">Italian (Italiano)</option>
+                    <option value="jp" disabled>Japanese (日本語)</option>
+                    <option value="kr" disabled>Korean (한국의)</option>
+                    <option value="pl">Polish (Polski)</option>
+                    <option value="pt">Portuguese (Português)</option>
+                    <option value="ru" disabled>Russian (русский)</option>
+                    <option value="mx">Spanish (Español)</option>
+                </select>
+                <select name="gameStyle" id="gameStyle">
+                    <option value="Blackout">Blackout</option>
+                    <option value="Columns">Columns</option>
+                    <option value="Corners">Corners</option>
+                    <option value="Cross">Cross</option>
+                    <option value="Inside">Inside</option>
+                    <option value="Outside">Outside</option>
+                    <option value="Random" selected>Random</option>
+                    <option value="Rows">Rows</option>
+                </select>
+                <button id="start">Start Game</button>
+            </div>
+            <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div>
+        </div>
+    </div>
+
+
     <script src="assets/data/library.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
