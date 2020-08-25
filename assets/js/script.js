@@ -82,6 +82,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
             }
         });
+        // //------------- TEST!!!
+        // switch (game) {
+        //     case "Columns":
+        //     case "Rows":
+        //         xyz = window[`ai${game}`];
+        //         xyz[2].forEach((card) => {
+        //             card.firstElementChild.classList.add("flipped");
+        //             card.firstElementChild.lastElementChild.classList.add("correct");
+        //             card.classList.add("correct");
+        //         });
+        //         break;
+        //     default:
+        //         xyz = window[`ai${game}`];
+        //         xyz.forEach((card) => {
+        //             card.firstElementChild.classList.add("flipped");
+        //             card.firstElementChild.lastElementChild.classList.add("correct");
+        //             card.classList.add("correct");
+        //         });
+        //         break;
+        // }
+        // //---------- END TEST
     }
 
 
@@ -102,6 +123,123 @@ document.addEventListener("DOMContentLoaded", () => {
                 return document.querySelectorAll(`#${player}-grid div:not([id^='${val}b']):not([id^='${val}o']):not([id$='1']):not([id$='5']).emoji-card`);
             case "Blackout": // entire board must be completed
                 return document.querySelectorAll(`#${player}-grid div.emoji-card`);
+        }
+    }
+
+
+    let gameStyle;
+    // game logic: <select> option for gameStyle
+    gameStyleList.addEventListener("change", () => {
+        selectedGame(gameStyleList);
+    });
+    selectedGame(gameStyleList); // run automatically on page-load
+    // game logic: get selected gameStyle based on user selection
+    function selectedGame(gameStyleList) {
+        gameStyle = gameStyleList.options[gameStyleList.selectedIndex].value;
+        switch (gameStyle) {
+            case "Random":
+                // assign a random gameStyle if user selects 'Random'
+                gameStyle = gameStyles[Math.floor(Math.random() * gameStyles.length)];
+        }
+        styleSpan.innerHTML = gameStyle;
+        generateGameSettings(gameStyle);
+    }
+
+
+    // always called on AI turn, but user needs to click button to check
+    let resultList;
+    function checkCards(player, game) {
+        resultList = [];
+        pointsDeducted = false; // reset to false each check
+        switch (game) {
+            // Array.from() required to convert from Object
+            // window[`vars`] required to combine 2 vars into 1
+            case "Columns":
+            case "Rows":
+                value = window[`${player}${game}`];
+                checkForBingo(Array.from(value[0]), player);
+                checkForBingo(Array.from(value[1]), player);
+                checkForBingo(Array.from(value[2]), player);
+                checkForBingo(Array.from(value[3]), player);
+                checkForBingo(Array.from(value[4]), player);
+                break;
+            default: // game = Corners|Cross|Outside|Inside|Blackout
+                checkForBingo(Array.from(window[`${player}${game}`]), player);
+                break;
+        }
+    }
+
+
+    // game logic: check if user or AI has Bingo
+    let result;
+    function checkForBingo(cardsToCheck, player) {
+        result = cardsToCheck.every((card) => {
+            // return 'true' if .every(card) checked contains 'correct' class
+            switch (player) {
+                case "user":
+                    return card.firstElementChild.lastElementChild.classList.contains("correct");
+                case "ai":
+                    return card.classList.contains("correct");
+            }
+        });
+        resultList.push(result);
+        if (resultList.includes(true) && activeGame) {
+            // resultList includes 'true'
+            isBingo(player, cardsToCheck);
+        } else {
+            // resultList is entirely 'false'
+            setTimeout(() => { // timeout needed for Cols/Rows for all 5x checks
+                 // deduct half of the player's points
+                if (!resultList.includes(true) && player == "user") deductHalf();
+            }, 50);
+        }
+        // if user reaches 0 points, then the AI automatically wins, so stop the game
+        if (score <= 0) {
+            aiWon = true;
+            userWon = false;
+            stopGame();
+        }
+    }
+
+
+    // result = true so we have a winner!
+    function isBingo(player, cardsToCheck) {
+        switch (player) {
+            case "user":
+                userWon = true; // User has won! trigger winning function!
+                aiWon = false;
+                cardsToCheck.forEach((card) => {
+                    // add pulsing effect to the tiles that won
+                    card.firstElementChild.lastElementChild.classList.add("winning-tiles");
+                });
+                break;
+            case "ai":
+                aiWon = true; // AI has won! trigger losing function
+                userWon = false;
+                cardsToCheck.forEach((card) => {
+                    // add blinking effect to the tiles that won
+                    card.classList.add("winning-tiles");
+                });
+                break;
+        }
+        stopGame(); // we have a winner! stop the game
+    }
+
+
+    // game logic:  deduct half of the user's points if clicking Bingo incorrectly
+    function deductHalf() {
+        if (!pointsDeducted) {
+            pointsDeducted = true; // true so rows/cols don't trigger 5x
+            let half = score / 2; // divide score in half
+            if (half < 50) half = 0;
+            score = Math.round(half / 50) * 50; // round to nearest 50pts
+            scoreSpan.innerHTML = score;
+            scoreSpan.classList.add("incorrect"); // add red text
+            userGrid.classList.add("incorrect"); // shake the userGrid
+            setTimeout(() => {
+                scoreSpan.classList.remove("incorrect"); // remove red text
+                userGrid.classList.remove("incorrect"); // remove the shake
+            }, 1000);
         }
     }
 
@@ -438,10 +576,6 @@ document.addEventListener("DOMContentLoaded", () => {
             settingsModal.style.display = "none";
         }
     });
-
-
-
-
 
 
 });
