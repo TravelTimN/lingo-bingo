@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='icon' sizes="192x192" id="favicon" href="assets/svg/gb.svg" type="image/x-icon">
     <link rel="stylesheet" href="assets/css/style.css" type="text/css">
     <title>Lingo Bingo</title>
 </head>
@@ -10,6 +11,8 @@
 
     <header>
         <h1 id="logo">Lingo Bingo</h1>
+        <!-- language flag -->
+        <img src="" alt="" class="flag">
     </header>
 
     <main>
@@ -61,6 +64,37 @@
                 <div id="stats-new"><button id="newGameBtn" class="button">NEW</button></div>
                 <!-- bingo button -->
                 <div id="stats-bingo"><button id="bingoBtn" class="button disabled">BINGO</button></div>
+            </aside>
+
+            <aside id="stats-ai">
+                <!-- AI lingo bingo card -->
+                <div id="ai-grid" class="board-grid">
+                    <div id="ai-b1" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-i1" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-n1" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-g1" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-o1" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-b2" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-i2" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-n2" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-g2" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-o2" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-b3" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-i3" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-n3" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-g3" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-o3" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-b4" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-i4" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-n4" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-g4" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-o4" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-b5" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-i5" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-n5" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-g5" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                    <div id="ai-o5" class="emoji-card"><div class="emoji-card-inner"><div class="emoji-card-front"></div><div class="emoji-card-back"><span class="emoji" role="img" aria-label="" data-emoji=""></span></div></div></div>
+                </div>
             </aside>
         </section>
 
@@ -128,6 +162,7 @@
 
 
     <script src="assets/data/library.js"></script>
+    <script src="assets/js/confetti.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>
