@@ -1,26 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 
+    const userBoard = document.getElementById("user-board");
+    const aiBoard = document.getElementById("ai-board");
+    const btnNew = document.getElementById("btn-new");
+    const btnBingo = document.getElementById("btn-bingo");
+    const btnStart = document.getElementById("btn-start");
+    const btnSettings = document.getElementById("btn-settings");
     const languageList = document.getElementById("language");
-    const gameStyleList = document.getElementById("gameStyle");
-    const userGrid = document.getElementById("user-grid");
-    const styleSpan = document.getElementById("style");
-    const startBtn = document.getElementById("start");
+    const gameList = document.getElementById("gameList");
+    const gameSpan = document.getElementById("game");
     const scoreSpan = document.getElementById("score");
     const flags = document.querySelectorAll(".flag");
     const wordSpan = document.getElementById("word");
-    const newGameBtn = document.getElementById("newGameBtn");
-    const bingoBtn = document.getElementById("bingoBtn");
     const timer = document.getElementById("timer");
     const audio = document.getElementById("audio");
     const modals = document.querySelectorAll(".modal");
-    const settingsModal = document.getElementById("settings-modal");
-    const settingsBtn = document.getElementById("settings-btn");
+    const modalSettings = document.getElementById("modal-settings");
+    const modalInfo = document.getElementById("modal-info");
+    const modalLeaderboard = document.getElementById("modal-leaderboard");
     const modalClose = document.querySelectorAll(".close");
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
     const players = ["user", "ai"];
-    const gameStyles = ["Columns", "Rows", "Corners", "Cross", "Outside", "Inside", "Blackout"];
+    const games = ["Columns", "Rows", "Corners", "Cross", "Outside", "Inside", "Blackout"];
 
     let userWon = false;
     let aiWon = false;
@@ -41,44 +44,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const mutedLangs = ["ie"]; // array of languages to mute
 
 
-    // helper: generates global variables based on gameStyles for User and AI, then calls getGameStyleCards()
+    // helper: generates global variables based on 'games' for User and AI, then calls getGameCards()
     function generateGameSettings(game) {
         players.forEach((player) => {
             window[`${player}${game}`] = []; // needs generated first for each
-            switch (player) {
-                case "user": // generate all 'User' variables
-                    switch (game) {
-                        case "Columns": // must be repeated 5x (for each column)
-                            columns.forEach((col) => {
-                                window[`${player}${game}`].push(getGameStyleCards(game, player, col));
-                            });
-                            break;
-                        case "Rows": // must be repeated 5x (for each row)
-                            rows.forEach((row) => {
-                                window[`${player}${game}`].push(getGameStyleCards(game, player, row));
-                            });
-                            break;
-                        default: // all other gameStyles (not cols/rows)
-                            window[`${player}${game}`] = getGameStyleCards(game, player, "");
-                            break;
-                    }
+            // generate all 'User' and 'AI' variables
+            switch (game) {
+                case "Columns": // must be repeated 5x (for each column)
+                    columns.forEach((col) => {
+                        window[`${player}${game}`].push(getGameCards(player, game, `${player}-${col}`));
+                    });
                     break;
-                case "ai": // generate all 'AI' variables
-                    switch (game) {
-                        case "Columns": // must be repeated 5x (for each column)
-                            columns.forEach((col) => {
-                                window[`${player}${game}`].push(getGameStyleCards(game, player, `ai-${col}`));
-                            });
-                            break;
-                        case "Rows": // must be repeated 5x (for each row)
-                            rows.forEach((row) => {
-                                window[`${player}${game}`].push(getGameStyleCards(game, player, row));
-                            });
-                            break;
-                        default: // all other gameStyles (not cols/rows)
-                            window[`${player}${game}`] = getGameStyleCards(game, player, "ai-");
-                            break;
-                    }
+                case "Rows": // must be repeated 5x (for each row)
+                    rows.forEach((row) => {
+                        window[`${player}${game}`].push(getGameCards(player, game, row));
+                    });
+                    break;
+                default: // all other 'games' (not cols/rows)
+                    window[`${player}${game}`] = getGameCards(player, game, `${player}-`);
                     break;
             }
         });
@@ -86,7 +69,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // switch (game) {
         //     case "Columns":
         //     case "Rows":
-        //         xyz = window[`ai${game}`];
+        //         abc = window[`user${game}`]; // user
+        //         xyz = window[`ai${game}`]; // ai
+        //         abc[2].forEach((card) => {
+        //             card.firstElementChild.classList.add("flipped");
+        //             card.firstElementChild.lastElementChild.classList.add("correct");
+        //             card.classList.add("correct");
+        //         });
         //         xyz[2].forEach((card) => {
         //             card.firstElementChild.classList.add("flipped");
         //             card.firstElementChild.lastElementChild.classList.add("correct");
@@ -94,7 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
         //         });
         //         break;
         //     default:
-        //         xyz = window[`ai${game}`];
+        //         abc = window[`user${game}`]; // user
+        //         xyz = window[`ai${game}`]; // ai
+        //         abc.forEach((card) => {
+        //             card.firstElementChild.classList.add("flipped");
+        //             card.firstElementChild.lastElementChild.classList.add("correct");
+        //             card.classList.add("correct");
+        //         });
         //         xyz.forEach((card) => {
         //             card.firstElementChild.classList.add("flipped");
         //             card.firstElementChild.lastElementChild.classList.add("correct");
@@ -106,43 +101,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // helper function: generate gameStyle cards required to win
-    function getGameStyleCards(game, player, val) {
+    // helper function: generate gameCards required to win
+    function getGameCards(player, game, val) {
         switch (game) {
             case "Columns": // any vertical column
-                return document.querySelectorAll(`#${player}-grid div[id^=${val}]`);
+                return document.querySelectorAll(`#${player}-board li[id^=${val}]`);
             case "Rows": // any horizontal row
-                return document.querySelectorAll(`#${player}-grid div[id$='${val}']`);
+                return document.querySelectorAll(`#${player}-board li[id$='${val}']`);
             case "Corners": // ignore the 'N' Column and the '3' Row
-                return document.querySelectorAll(`#${player}-grid div:not([id^='${val}n']):not([id$='3']).emoji-card`);
+                return document.querySelectorAll(`#${player}-board li:not([id^='${val}n']):not([id$='3']).emoji-card`);
             case "Cross": // only the 'N' Column and the '3' Row
-                return document.querySelectorAll(`#${player}-grid div[id^='${val}n'].emoji-card, #${player}-grid div[id$='3'].emoji-card`);
+                return document.querySelectorAll(`#${player}-board li[id^='${val}n'].emoji-card, #${player}-board li[id$='3'].emoji-card`);
             case "Outside": // only cards starting with 'Bs', 'Os', or ending with '1s', '5s'
-                return document.querySelectorAll(`#${player}-grid div[id^='${val}b'],[id^='${val}o'].emoji-card, #${player}-grid div[id$='1'].emoji-card, #${player}-grid div[id$='5'].emoji-card`);
+                return document.querySelectorAll(`#${player}-board li[id^='${val}b'],[id^='${val}o'].emoji-card, #${player}-board li[id$='1'].emoji-card, #${player}-board li[id$='5'].emoji-card`);
             case "Inside": // only cards that do NOT start with 'Bs', 'Os', or end with '1s', '5s'
-                return document.querySelectorAll(`#${player}-grid div:not([id^='${val}b']):not([id^='${val}o']):not([id$='1']):not([id$='5']).emoji-card`);
+                return document.querySelectorAll(`#${player}-board li:not([id^='${val}b']):not([id^='${val}o']):not([id$='1']):not([id$='5']).emoji-card`);
             case "Blackout": // entire board must be completed
-                return document.querySelectorAll(`#${player}-grid div.emoji-card`);
+                return document.querySelectorAll(`#${player}-board li.emoji-card`);
         }
     }
 
 
-    let gameStyle;
-    // game logic: <select> option for gameStyle
-    gameStyleList.addEventListener("change", () => {
-        selectedGame(gameStyleList);
+    let game;
+    // game logic: <select> option for 'game'
+    gameList.addEventListener("change", () => {
+        selectedGame(gameList);
     });
-    selectedGame(gameStyleList); // run automatically on page-load
-    // game logic: get selected gameStyle based on user selection
-    function selectedGame(gameStyleList) {
-        gameStyle = gameStyleList.options[gameStyleList.selectedIndex].value;
-        switch (gameStyle) {
+    selectedGame(gameList); // run automatically on page-load
+    // game logic: get selected 'game' based on user selection
+    function selectedGame(gameList) {
+        game = gameList.options[gameList.selectedIndex].value;
+        switch (game) {
             case "Random":
-                // assign a random gameStyle if user selects 'Random'
-                gameStyle = gameStyles[Math.floor(Math.random() * gameStyles.length)];
+                // assign a random 'game' if user selects 'Random'
+                game = games[Math.floor(Math.random() * games.length)];
         }
-        styleSpan.innerHTML = gameStyle;
-        generateGameSettings(gameStyle);
+        gameSpan.innerHTML = game;
+        generateGameSettings(game);
     }
 
 
@@ -152,8 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
         resultList = [];
         pointsDeducted = false; // reset to false each check
         switch (game) {
-            // Array.from() required to convert from Object
             // window[`vars`] required to combine 2 vars into 1
+            // Array.from() required to convert from Object
             case "Columns":
             case "Rows":
                 value = window[`${player}${game}`];
@@ -235,10 +230,10 @@ document.addEventListener("DOMContentLoaded", () => {
             score = Math.round(half / 50) * 50; // round to nearest 50pts
             scoreSpan.innerHTML = score;
             scoreSpan.classList.add("incorrect"); // add red text
-            userGrid.classList.add("incorrect"); // shake the userGrid
+            userBoard.classList.add("incorrect"); // wiggle the userBoard
             setTimeout(() => {
                 scoreSpan.classList.remove("incorrect"); // remove red text
-                userGrid.classList.remove("incorrect"); // remove the shake
+                userBoard.classList.remove("incorrect"); // remove the wiggle
             }, 1000);
         }
     }
@@ -271,8 +266,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     
     // game logic: start button
-    startBtn.addEventListener("click", () => {
-        selectedGame(gameStyleList);
+    btnStart.addEventListener("click", () => {
+        selectedGame(gameList);
         startGame();
     });
 
@@ -280,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // game logic: start game
     function startGame() {
         word.innerHTML = "... LOADING GAME ...";
-        settingsModal.style.display = "none"; // close settingsModal
+        modalSettings.style.display = "none"; // close modalSettings
         selectedLanguage = languageList.options[languageList.selectedIndex].value;
         // start the game/words and timer
         currentGame = setInterval(() => {
@@ -293,16 +288,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // cardList = getRandomCards(allCards, 3); // testing shorter games
         cardList = getRandomCards(allCards, allCards.length);
         // game logic: populate the boards
-        populateCards(userCards, "#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji");
-        populateCards(aiCards, "#ai-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        populateCards(userCards, "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        populateCards(aiCards, "#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         activeGame = true; // game is now active
         setTimeout(() => {
-            if (activeGame) bingoBtn.classList.remove("disabled"); // enable the Bingo button once cards are ready
+            if (activeGame) btnBingo.classList.remove("disabled"); // enable the Bingo button once cards are ready
         }, 5000);
     }
 
 
-    settingsBtn.addEventListener("click", () => {
+    btnSettings.addEventListener("click", () => {
         resetGame();
     });
     // reset game
@@ -310,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confetti.stop(); // stop confetti
         score = 1000;
         scoreSpan.innerHTML = 1000;
-        bingoBtn.classList.add("disabled");
+        btnBingo.classList.add("disabled");
         activeGame = false;
         userWon = false;
         aiWon = false;
@@ -329,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // stop game
     function stopGame() {
-        bingoBtn.classList.add("disabled");
+        btnBingo.classList.add("disabled");
         activeGame = false;
         clearInterval(cardInterval);
         clearInterval(currentGame);
@@ -345,13 +340,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // reset all cards (user and AI)
     function resetCards() {      
-        userEmojiCards = document.querySelectorAll("#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        userEmojiCards = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         userEmojiCards.forEach((card) => {
             card.parentNode.parentNode.classList.remove("flipped"); // unflip cards
             card.parentNode.classList.remove("correct"); // remove 'correct' class
             card.parentNode.classList.remove("winning-tiles"); // remove 'winning-tiles' class
         });
-        aiEmojiCards = document.querySelectorAll("#ai-grid .emoji-card");
+        aiEmojiCards = document.querySelectorAll("#ai-board .emoji-card");
         aiEmojiCards.forEach((card) => {
             card.classList.remove("correct"); // remove 'correct' class
             card.classList.remove("winning-tiles"); // remove 'winning-tiles' class
@@ -380,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let i = 0;
         cards.forEach((card) => {
             // use emoji in HTML: https://www.kirupa.com/html5/emoji.htm
-            if (grid === "#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
+            if (grid === "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
                 card.innerText = String.fromCodePoint(array[i].emoji.replace("U+", "0x"));
             }
             card.setAttribute("aria-label", array[i].aria);
@@ -398,7 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let cardIndex = 0;
         cardInterval = setInterval(() => {
             if (cardIndex != cards.length && activeGame) {
-                if (grid === "#user-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
+                if (grid === "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
                     cards[cardIndex++].parentNode.parentNode.classList.add("flipped");
                 }
             } else {
@@ -409,8 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // game logic
-    // function every 5 seconds to pull item from 'cardList' array
+    // game logic: function every 5 seconds to pull item from 'cardList' array
     function populateAnswerList(lang) {
         if (cardList.length === 0) {
             clearInterval(currentGame);
@@ -424,22 +418,22 @@ document.addEventListener("DOMContentLoaded", () => {
             if (mutedLangs.indexOf(lang) < 0 && audio.innerHTML != "🔇") {
                 speakWord(spokenWord, lang);
             }
-            autocompleteAIgrid(cardList[0]); // function to fill-out AI grid
+            autocompleteAiGrid(cardList[0]); // function to fill-out AI grid
             cardList.shift(); // remove first item from cardList to avoid dupes
         }
     }
 
 
     // helper: function to fill-out AI grid
-    function autocompleteAIgrid(word) {
+    function autocompleteAiGrid(word) {
         if (aiCards.includes(word)) {
             // https://stackoverflow.com/a/13449757
-            let aiCard = document.querySelector(`#ai-grid .emoji-card .emoji-card-inner .emoji-card-back .emoji[data-emoji~="${word.word}"]`);
+            let aiCard = document.querySelector(`#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji[data-emoji~="${word.word}"]`);
             // give a delay to allow user to guess first in case of tie
             markAI = setTimeout(() => {
                 aiCard.parentNode.parentNode.parentNode.classList.add("correct");
-                checkCards("ai", gameStyle);
-            }, 4500);
+                checkCards("ai", game);
+            }, 4500); // delay 4.5s to allow user to call Bingo first, in case of tie
         }
     }
 
@@ -518,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // user click event
     // NON-TEST! FIX: this should be in a function instead
-    userCardsList = document.querySelectorAll("#user-grid .emoji-card .emoji-card-inner .emoji-card-back");
+    userCardsList = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back");
     userCardsList.forEach((card) => {
         card.addEventListener("click", () => {
             if(activeGame) { // only if the game is active
@@ -550,17 +544,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // game function: user clicks to check for Bingo
-    bingoBtn.addEventListener("click", () => {
-        checkCards("user", gameStyle);
+    btnBingo.addEventListener("click", () => {
+        checkCards("user", game);
     });
 
 
-    // settingsModal
-    settingsBtn.addEventListener("click", () => {
-        settingsModal.style.display = "block";
+    // modalSettings
+    btnSettings.addEventListener("click", () => {
+        modalSettings.style.display = "block";
     });
-    newGameBtn.addEventListener("click", () => {
-        settingsModal.style.display = "block";
+    btnNew.addEventListener("click", () => {
+        modalSettings.style.display = "block";
         resetGame();
     });
     // close modals
@@ -572,8 +566,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
     window.addEventListener("click", (e) => {
-        if (e.target == settingsModal) {
-            settingsModal.style.display = "none";
+        if (e.target == modalSettings) {
+            modalSettings.style.display = "none";
         }
     });
 
