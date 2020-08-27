@@ -1,20 +1,22 @@
+/* jshint esversion: 8 */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-
+    // constant variables
     const userBoard = document.getElementById("user-board");
     const aiBoard = document.getElementById("ai-board");
     const btnNew = document.getElementById("btn-new");
     const btnBingo = document.getElementById("btn-bingo");
     const btnStart = document.getElementById("btn-start");
     const btnSettings = document.getElementById("btn-settings");
-    const languageList = document.getElementById("language");
-    const gameList = document.getElementById("gameList");
-    const gameSpan = document.getElementById("game");
-    const scoreSpan = document.getElementById("score");
+    const btnAudio = document.getElementById("btn-audio");
+    const languageList = document.getElementById("language-list");
+    const gameList = document.getElementById("game-list");
     const flags = document.querySelectorAll(".flag");
-    const wordSpan = document.getElementById("word");
-    const timer = document.getElementById("timer");
-    const audio = document.getElementById("audio");
+    const timerSpan = document.getElementById("timer-span");
+    const scoreSpan = document.getElementById("score-span");
+    const scoreDiv = document.getElementById("score");
+    const wordSpan = document.getElementById("word-span");
     const modals = document.querySelectorAll(".modal");
     const modalSettings = document.getElementById("modal-settings");
     const modalInfo = document.getElementById("modal-info");
@@ -22,29 +24,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalClose = document.querySelectorAll(".close");
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
-    const players = ["user", "ai"];
+    const players = ["user", "ai", "goal"];
     const games = ["Columns", "Rows", "Corners", "Cross", "Outside", "Inside", "Blackout"];
 
-    let userWon = false;
-    let aiWon = false;
-    let selectedLanguage;
-    let currentGame;
-    let answerList = [];
-    let userCards;
-    let aiCards;
-    let markAI;
-    let cardList;
-    let cardInterval;
+    // dynamic variables
+    let userWon, aiWon = false;
+    let userCards, aiCards, goalCards;
     let activeGame = false;
+    let answerList = [];
     let score = 1000;
     let pointsDeducted = false;
+    let selectedLanguage, currentGame, cardInterval, cardList, markAI;
+
     // speech syntheses
     let msg, msgVoice, msgLang;
     const voices = window.speechSynthesis.getVoices();
-    const mutedLangs = ["ie"]; // array of languages to mute
+    const mutedLangs = ["ie"]; // languages to mute by default
 
 
-    // helper: generates global variables based on 'games' for User and AI, then calls getGameCards()
+    // helper: generates global variables based on 'games' for User/AI/Goal, then calls getGameCards()
     function generateGameSettings(game) {
         players.forEach((player) => {
             window[`${player}${game}`] = []; // needs generated first for each
@@ -65,39 +63,52 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
             }
         });
-        // //------------- TEST!!!
-        // switch (game) {
-        //     case "Columns":
-        //     case "Rows":
-        //         abc = window[`user${game}`]; // user
-        //         xyz = window[`ai${game}`]; // ai
-        //         abc[2].forEach((card) => {
-        //             card.firstElementChild.classList.add("flipped");
-        //             card.firstElementChild.lastElementChild.classList.add("correct");
-        //             card.classList.add("correct");
-        //         });
-        //         xyz[2].forEach((card) => {
-        //             card.firstElementChild.classList.add("flipped");
-        //             card.firstElementChild.lastElementChild.classList.add("correct");
-        //             card.classList.add("correct");
-        //         });
-        //         break;
-        //     default:
-        //         abc = window[`user${game}`]; // user
-        //         xyz = window[`ai${game}`]; // ai
-        //         abc.forEach((card) => {
-        //             card.firstElementChild.classList.add("flipped");
-        //             card.firstElementChild.lastElementChild.classList.add("correct");
-        //             card.classList.add("correct");
-        //         });
-        //         xyz.forEach((card) => {
-        //             card.firstElementChild.classList.add("flipped");
-        //             card.firstElementChild.lastElementChild.classList.add("correct");
-        //             card.classList.add("correct");
-        //         });
-        //         break;
-        // }
-        // //---------- END TEST
+    }
+
+
+    // generate the goal-grid with the cards required to win
+    function generateGoalGrid(game) {
+        switch (game) {
+            case "Columns":
+            case "Rows":
+                cards = window[`goal${game}`];
+                cards[2].forEach((card) => {
+                    card.classList.add("correct");
+                });
+                // //----- TEST (start)
+                // // user
+                // cardsUser = window[`user${game}`];
+                // cardsUser[2].forEach((card) => {
+                //     card.firstElementChild.classList.add("flipped");
+                //     card.firstElementChild.lastElementChild.classList.add("correct");
+                // });
+                // // ai
+                // cardsAI = window[`ai${game}`];
+                // cardsAI[2].forEach((card) => {
+                //     card.classList.add("correct");
+                // });
+                // //----- TEST (end)
+                break;
+            default:
+                cards = window[`goal${game}`];
+                cards.forEach((card) => {
+                    card.classList.add("correct");
+                });
+                // //----- TEST (start)
+                // // user
+                // cardsUser = window[`user${game}`];
+                // cardsUser.forEach((card) => {
+                //     card.firstElementChild.classList.add("flipped");
+                //     card.firstElementChild.lastElementChild.classList.add("correct");
+                // });
+                // // ai
+                // cardsAI = window[`ai${game}`];
+                // cardsAI.forEach((card) => {
+                //     card.classList.add("correct");
+                // });
+                // //----- TEST (end)
+                break;
+        }
     }
 
 
@@ -136,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 // assign a random 'game' if user selects 'Random'
                 game = games[Math.floor(Math.random() * games.length)];
         }
-        gameSpan.innerHTML = game;
         generateGameSettings(game);
     }
 
@@ -224,16 +234,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // game logic:  deduct half of the user's points if clicking Bingo incorrectly
     function deductHalf() {
         if (!pointsDeducted) {
-            pointsDeducted = true; // true so rows/cols don't trigger 5x
+            pointsDeducted = true; // true so cols/rows don't trigger 5x
             let half = score / 2; // divide score in half
             if (half < 50) half = 0;
-            score = Math.round(half / 50) * 50; // round to nearest 50pts
-            scoreSpan.innerHTML = score;
-            scoreSpan.classList.add("incorrect"); // add red text
+            let roundedUp = Math.round(half / 50) * 50; // round to nearest 50pts
+            let deduction = score - roundedUp;
+            scoreSpan.innerHTML = `- ${deduction} pts`;
+            score = roundedUp;
+            scoreDiv.classList.add("incorrect"); // add red text
             userBoard.classList.add("incorrect"); // wiggle the userBoard
             setTimeout(() => {
-                scoreSpan.classList.remove("incorrect"); // remove red text
+                scoreDiv.classList.remove("incorrect"); // remove red text
                 userBoard.classList.remove("incorrect"); // remove the wiggle
+                scoreSpan.innerHTML = score;
             }, 1000);
         }
     }
@@ -244,13 +257,14 @@ document.addEventListener("DOMContentLoaded", () => {
         languageList.addEventListener("change", () => {
             selectedLanguage = languageList.options[languageList.selectedIndex].value;
             flag.src = `assets/svg/${selectedLanguage}.svg`;
+            flag.alt = `${selectedLanguage} flag`;
             document.querySelector("link#favicon").href = `assets/svg/${selectedLanguage}.svg`;
-            // change audio emoji if a muted-language and disable it
+            // change btnAudio emoji if a muted-language and disable it
             if (mutedLangs.indexOf(selectedLanguage) >= 0) {
-                audio.innerHTML = "🔇";
-                audio.style.pointerEvents = "none";
+                btnAudio.innerHTML = "🔇";
+                btnAudio.style.pointerEvents = "none";
             } else {
-                audio.style.pointerEvents = "auto";
+                btnAudio.style.pointerEvents = "auto";
             }
         });
     }
@@ -259,7 +273,6 @@ document.addEventListener("DOMContentLoaded", () => {
     flagSelection();
     function flagSelection() {
         flags.forEach((flag) => {
-            flag.src = `assets/svg/gb.svg`;
             languageSelection(flag);
         });
     }
@@ -274,23 +287,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // game logic: start game
     function startGame() {
-        word.innerHTML = "... LOADING GAME ...";
+        wordSpan.innerHTML = "... LOADING GAME ...";
         modalSettings.style.display = "none"; // close modalSettings
         selectedLanguage = languageList.options[languageList.selectedIndex].value;
-        // start the game/words and timer
+        // start the game: words and timer
         currentGame = setInterval(() => {
             populateAnswerList(selectedLanguage);
             gameTimer();
         }, 5000);
-        // game logic: generate emoji list for user and AI
+        // generate emoji list for user and AI
         userCards = getRandomCards(allCards, 25);
         aiCards = getRandomCards(allCards, 25);
         // cardList = getRandomCards(allCards, 3); // testing shorter games
         cardList = getRandomCards(allCards, allCards.length);
-        // game logic: populate the boards
+        // populate the User & AI boards
         populateCards(userCards, "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         populateCards(aiCards, "#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         activeGame = true; // game is now active
+        setTimeout(() => {
+            // display specific game being played on goal-board
+            generateGoalGrid(game);
+        }, 3500);
         setTimeout(() => {
             if (activeGame) btnBingo.classList.remove("disabled"); // enable the Bingo button once cards are ready
         }, 5000);
@@ -317,8 +334,8 @@ document.addEventListener("DOMContentLoaded", () => {
         clearTimeout(markAI);
         clearInterval(currentGame);
         resetCards();
-        word.innerHTML = "Start New Game";
-        timer.innerHTML = 5;
+        wordSpan.innerHTML = "Start New Game";
+        timerSpan.innerHTML = 5;
     }
 
     
@@ -330,26 +347,21 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(currentGame);
         confetti.stop();
         if (userWon) {
-            console.log("User Won");
+            // console.log("User Won"); // TEST
             confetti.start(5000);
         } else if (aiWon) {
-            console.log("AI won");
+            // console.log("AI won"); // TEST
         }
     }
 
 
-    // reset all cards (user and AI)
-    function resetCards() {      
-        userEmojiCards = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
-        userEmojiCards.forEach((card) => {
-            card.parentNode.parentNode.classList.remove("flipped"); // unflip cards
-            card.parentNode.classList.remove("correct"); // remove 'correct' class
-            card.parentNode.classList.remove("winning-tiles"); // remove 'winning-tiles' class
-        });
-        aiEmojiCards = document.querySelectorAll("#ai-board .emoji-card");
-        aiEmojiCards.forEach((card) => {
-            card.classList.remove("correct"); // remove 'correct' class
-            card.classList.remove("winning-tiles"); // remove 'winning-tiles' class
+    // reset all cards (user, ai, goal)
+    function resetCards() {
+        cardsToReset = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji, #ai-board .emoji-card, #goal-board .emoji-card");
+        cardsToReset.forEach((card) => {
+            card.parentNode.parentNode.classList.remove("flipped"); // un-flip user cards
+            card.parentNode.classList.remove("correct", "winning-tiles"); // user cards
+            card.classList.remove("correct", "winning-tiles"); // ai and goal cards
         });
     }
 
@@ -415,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
             wordSpan.innerHTML = cardList[0][lang];
             spokenWord = cardList[0][lang];
             // verbalize spoken word if available
-            if (mutedLangs.indexOf(lang) < 0 && audio.innerHTML != "🔇") {
+            if (mutedLangs.indexOf(lang) < 0 && btnAudio.innerHTML != "🔇") {
                 speakWord(spokenWord, lang);
             }
             autocompleteAiGrid(cardList[0]); // function to fill-out AI grid
@@ -483,14 +495,16 @@ document.addEventListener("DOMContentLoaded", () => {
             speechSynthesis.speak(msg);
         } else {
             alert("No SpeechSynthesis Available");
-            audio.innerHTML = "&#x1F507";
+            btnAudio.innerHTML = "&#x1F507;";
+            // NON-TEST: need to make this disabled
+            // also, if suddenly available above, remove disabled
         }
     }
 
 
     // toggle mute emoji
-    audio.addEventListener("click", () => {
-        audio.innerHTML = (audio.innerHTML == "🔊") ? "&#x1F507" : "&#x1F50A";
+    btnAudio.addEventListener("click", () => {
+        btnAudio.innerHTML = (btnAudio.innerHTML == "🔊") ? "&#x1F507;" : "&#x1F50A;";
     });
 
 
@@ -498,10 +512,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function gameTimer() {
         let time = 4;
         let timeInterval;
-        timer.innerHTML = 5;
+        timerSpan.innerHTML = 5;
         timeInterval = setInterval(() => {
             if (time >= 1 && cardList.length >= 0 && activeGame) {
-                timer.innerHTML = time;
+                timerSpan.innerHTML = time;
                 time--;
             } else {
                 clearInterval(timeInterval);
@@ -520,12 +534,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 // check if clicked card exists inside of the answerList[]
                 if (answerList.some(word => word.word === card.firstElementChild.dataset.emoji)) {
                     score += 250; // add 250pts (correct)
+                    scoreSpan.innerHTML = "+ 250 pts";
                     userCheck("correct", card);
                 } else {
                     score -= 250; // deduct 250pts (incorrect)
+                    scoreSpan.innerHTML = "- 250 pts";
                     userCheck("incorrect", card);
                 }
-                scoreSpan.innerHTML = score;
             }
         });
     });
@@ -534,11 +549,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // game function: user correct vs incorrect
     function userCheck(answer, card) {
         card.classList.add(answer);
-        scoreSpan.classList.add(answer);
+        scoreDiv.classList.add(answer);
         setTimeout(() => {
             // remove temporary color
-            scoreSpan.classList.remove(answer);
+            scoreDiv.classList.remove(answer);
             if (answer == "incorrect") card.classList.remove(answer);
+            scoreSpan.innerHTML = score;
         }, 1000);
     }
 
