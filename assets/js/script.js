@@ -193,10 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
             isBingo(player, cardsToCheck);
         } else {
             // resultList is entirely 'false'
-            setTimeout(() => { // timeout needed for Cols/Rows for all 5x checks
+            setTimeout(() => { // timeout needed for cols/rows for all 5x checks
                  // deduct half of the player's points
                 if (!resultList.includes(true) && player == "user") deductHalf();
-            }, 50);
+            }, 50); // slight delay due to checking all cols/rows
         }
         // if user reaches 0 points, then the AI automatically wins, so stop the game
         if (score <= 0) {
@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // result = true so we have a winner!
+    // game function: result = true so we have a winner!
     function isBingo(player, cardsToCheck) {
         switch (player) {
             case "user":
@@ -322,6 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confetti.stop(); // stop confetti
         score = 1000;
         scoreSpan.innerHTML = 1000;
+        scoreDiv.classList.remove("correct", "incorrect");
         btnBingo.classList.add("disabled");
         activeGame = false;
         userWon = false;
@@ -348,9 +349,16 @@ document.addEventListener("DOMContentLoaded", () => {
         confetti.stop();
         if (userWon) {
             // console.log("User Won"); // TEST
+            setTimeout(() => {
+                scoreDiv.classList.add("correct");
+            }, 500);
             confetti.start(5000);
         } else if (aiWon) {
             // console.log("AI won"); // TEST
+            scoreSpan.innerHTML = "Game Over";
+            setTimeout(() => {
+                scoreDiv.classList.add("incorrect");
+            }, 500);
         }
     }
 
