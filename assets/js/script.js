@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalInfo = document.getElementById("modal-info");
     const modalLeaderboard = document.getElementById("modal-leaderboard");
     const modalClose = document.querySelectorAll(".close");
+    const toHide = document.querySelectorAll("small, br");
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
     const players = ["user", "ai", "goal"];
@@ -35,8 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let userCards, aiCards, goalCards, selectedLanguage, game, currentGame, cardInterval, cardList, markAI, result, resultList;
 
     // speech syntheses
-    let msg, msgVoice, msgLang;
-    const voices = window.speechSynthesis.getVoices();
+    let msg, msgVoice, msgLang, voices;
+    let speechAvailable = false;
     const mutedLangs = ["ie"]; // languages to mute by default
 
 
@@ -335,7 +336,8 @@ document.addEventListener("DOMContentLoaded", () => {
         resetCards();
         score = 1000;
         scoreSpan.innerHTML = 1000;
-        wordSpan.innerHTML = "Start New Game";
+        toHide.forEach((item) => item.style.display = "unset");
+        wordSpan.innerHTML = "Click 'New Game'";
         timerSpan.innerHTML = 5;
         scoreDiv.classList.remove("correct", "incorrect");
         btnLingoBingo.classList.add("disabled");
@@ -345,6 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // stop game
     function stopGame() {
+        toHide.forEach((item) => item.style.display = "none");
         btnLingoBingo.classList.add("disabled");
         activeGame = false;
         clearInterval(cardInterval);
@@ -463,9 +466,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // speechSynthesis API
+    if ("speechSynthesis" in window) {
+        speechAvailable = true;
+        voices = window.speechSynthesis.getVoices();
+        btnAudio.classList.remove("disabled-audio");
+    } else {
+        speechAvailable = false;
+        alert("No SpeechSynthesis Available");
+        btnAudio.classList.add("disabled-audio");
+    }
+
+
     // helper: speak the word if available
     function speakWord(word, lang) {
-        if ("speechSynthesis" in window) {
+        if (speechAvailable) {
             // synthesis supported
             msg = new SpeechSynthesisUtterance();
             switch (lang) {
@@ -506,11 +521,6 @@ document.addEventListener("DOMContentLoaded", () => {
             msg.text = word.toString();
             msg.lang = msgLang.toString();
             speechSynthesis.speak(msg);
-        } else {
-            alert("No SpeechSynthesis Available");
-            btnAudio.innerHTML = "&#x1F507;";
-            // NON-TEST: need to make this disabled
-            // also, if suddenly available above, remove disabled
         }
     }
 
