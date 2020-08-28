@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='icon' sizes="192x192" id="favicon" href="assets/svg/gb.svg" type="image/x-icon">
-    <link rel="stylesheet" href="assets/css/style.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/mobile.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/tablet.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/desktop.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/desktop-large.css" type="text/css">
     <title>Lingo Bingo</title>
 </head>
 <body>
 
 
     <header>
-        <h1 id="logo">Lingo Bingo</h1>
         <!-- language flag -->
         <img src="assets/svg/gb.svg" alt="gb flag" id="logo-flag" class="flag">
+        <h1 id="logo">Lingo Bingo</h1>
     </header>
 
 
@@ -53,22 +56,23 @@
 
         <section id="stats">
             <!-- button: new game -->
-            <button id="btn-new" class="button"><span class="bold">NEW<br>GAME</span></button>
+            <button id="btn-new" class="button"><span class="bold">NEW GAME</span></button>
             <!-- button: lingo bingo -->
-            <button id="btn-lingobingo" class="button disabled"><span class="bold">LINGO<br>BINGO</span></button>
+            <button id="btn-lingobingo" class="button disabled"><span class="bold">LINGO BINGO</span></button>
             <!-- timer -->
             <div id="timer"><p><small>TIMER</small><br><span id="timer-span" class="bold">5</span></p></div>
             <!-- score -->
             <div id="score"><p><small>SCORE</small><br><span id="score-span" class="bold">1000</span></p></div>
             <!-- username -->
-            <div id="username"><p><small>USERNAME</small><br><span id="username-span" contenteditable="true" spellcheck="false" class="bold">-</span></p></div>
+            <div id="username"><span id="username-span" contenteditable="true" spellcheck="false" class="bold">USERNAME</span></p></div>
         </section>
 
 
-        <section id="ai">
-            <!-- current word -->
-            <div id="word"><p id="word-span" class="bold">Start New Game</p></div>
+        <!-- current word -->
+        <div id="word"><p id="word-span" class="bold">Click 'New Game'</p></div>
 
+
+        <section id="ai">
             <!-- grid: Goal -->
             <ul id="goal-board" class="board">
                 <li id="goal-b1" class="emoji-card"></li>
