@@ -4,9 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // constant variables
     const userBoard = document.getElementById("user-board");
+    const userTiles = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back");
     const aiBoard = document.getElementById("ai-board");
     const btnNew = document.getElementById("btn-new");
-    const btnBingo = document.getElementById("btn-bingo");
+    const btnLingoBingo = document.getElementById("btn-lingobingo");
     const btnStart = document.getElementById("btn-start");
     const btnSettings = document.getElementById("btn-settings");
     const btnAudio = document.getElementById("btn-audio");
@@ -28,18 +29,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const games = ["Columns", "Rows", "Corners", "Cross", "Outside", "Inside", "Blackout"];
 
     // dynamic variables
-    let userWon, aiWon = false;
-    let userCards, aiCards, goalCards;
-    let activeGame = false;
+    let userWon, aiWon, activeGame, pointsDeducted = false;
     let answerList = [];
     let score = 1000;
-    let pointsDeducted = false;
-    let selectedLanguage, currentGame, cardInterval, cardList, markAI;
+    let userCards, aiCards, goalCards, selectedLanguage, game, currentGame, cardInterval, cardList, markAI, result, resultList;
 
     // speech syntheses
     let msg, msgVoice, msgLang;
     const voices = window.speechSynthesis.getVoices();
     const mutedLangs = ["ie"]; // languages to mute by default
+
+
+    userTiles.forEach((card) => card.classList.add("disabled")); // disable user cards on load
 
 
     // helper: generates global variables based on 'games' for User/AI/Goal, then calls getGameCards()
@@ -133,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    let game;
     // game logic: <select> option for 'game'
     gameList.addEventListener("change", () => {
         selectedGame(gameList);
@@ -152,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // always called on AI turn, but user needs to click button to check
-    let resultList;
     function checkCards(player, game) {
         resultList = [];
         pointsDeducted = false; // reset to false each check
@@ -162,22 +161,21 @@ document.addEventListener("DOMContentLoaded", () => {
             case "Columns":
             case "Rows":
                 value = window[`${player}${game}`];
-                checkForBingo(Array.from(value[0]), player);
-                checkForBingo(Array.from(value[1]), player);
-                checkForBingo(Array.from(value[2]), player);
-                checkForBingo(Array.from(value[3]), player);
-                checkForBingo(Array.from(value[4]), player);
+                checkForLingoBingo(Array.from(value[0]), player);
+                checkForLingoBingo(Array.from(value[1]), player);
+                checkForLingoBingo(Array.from(value[2]), player);
+                checkForLingoBingo(Array.from(value[3]), player);
+                checkForLingoBingo(Array.from(value[4]), player);
                 break;
             default: // game = Corners|Cross|Outside|Inside|Blackout
-                checkForBingo(Array.from(window[`${player}${game}`]), player);
+                checkForLingoBingo(Array.from(window[`${player}${game}`]), player);
                 break;
         }
     }
 
 
-    // game logic: check if user or AI has Bingo
-    let result;
-    function checkForBingo(cardsToCheck, player) {
+    // game logic: check if user or AI has LingoBingo
+    function checkForLingoBingo(cardsToCheck, player) {
         result = cardsToCheck.every((card) => {
             // return 'true' if .every(card) checked contains 'correct' class
             switch (player) {
@@ -190,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resultList.push(result);
         if (resultList.includes(true) && activeGame) {
             // resultList includes 'true'
-            isBingo(player, cardsToCheck);
+            isLingoBingo(player, cardsToCheck);
         } else {
             // resultList is entirely 'false'
             setTimeout(() => { // timeout needed for cols/rows for all 5x checks
@@ -198,17 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!resultList.includes(true) && player == "user") deductHalf();
             }, 50); // slight delay due to checking all cols/rows
         }
-        // if user reaches 0 points, then the AI automatically wins, so stop the game
-        if (score <= 0) {
-            aiWon = true;
-            userWon = false;
-            stopGame();
-        }
     }
 
 
     // game function: result = true so we have a winner!
-    function isBingo(player, cardsToCheck) {
+    function isLingoBingo(player, cardsToCheck) {
         switch (player) {
             case "user":
                 userWon = true; // User has won! trigger winning function!
@@ -231,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // game logic:  deduct half of the user's points if clicking Bingo incorrectly
+    // game logic:  deduct half of the user's points if clicking LingoBingo incorrectly
     function deductHalf() {
         if (!pointsDeducted) {
             pointsDeducted = true; // true so cols/rows don't trigger 5x
@@ -241,12 +233,21 @@ document.addEventListener("DOMContentLoaded", () => {
             let deduction = score - roundedUp;
             scoreSpan.innerHTML = `- ${deduction} pts`;
             score = roundedUp;
-            scoreDiv.classList.add("incorrect"); // add red text
+            scoreDiv.classList.add("incorrect"); // add red bgColor
             userBoard.classList.add("incorrect"); // wiggle the userBoard
+            if (score <= 0) { // user lost all points, so the AI automatically wins - stopGame()
+                aiWon = true;
+                userWon = false;
+                stopGame();
+            } else { // user still has points, and can continue playing
+                setTimeout(() => {
+                    scoreDiv.classList.remove("incorrect"); // remove red bgColor
+                    btnLingoBingo.classList.remove("disabled"); // re-enable LingoBingo button
+                    scoreSpan.innerHTML = score;
+                }, 1000);
+            }
             setTimeout(() => {
-                scoreDiv.classList.remove("incorrect"); // remove red text
                 userBoard.classList.remove("incorrect"); // remove the wiggle
-                scoreSpan.innerHTML = score;
             }, 1000);
         }
     }
@@ -309,7 +310,8 @@ document.addEventListener("DOMContentLoaded", () => {
             generateGoalGrid(game);
         }, 3500);
         setTimeout(() => {
-            if (activeGame) btnBingo.classList.remove("disabled"); // enable the Bingo button once cards are ready
+            btnLingoBingo.classList.remove("disabled"); // enable the LingoBingo button
+            userTiles.forEach((card) => card.classList.remove("disabled")); // enable user cards
         }, 5000);
     }
 
@@ -320,10 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // reset game
     function resetGame() {
         confetti.stop(); // stop confetti
-        score = 1000;
-        scoreSpan.innerHTML = 1000;
-        scoreDiv.classList.remove("correct", "incorrect");
-        btnBingo.classList.add("disabled");
         activeGame = false;
         userWon = false;
         aiWon = false;
@@ -335,26 +333,33 @@ document.addEventListener("DOMContentLoaded", () => {
         clearTimeout(markAI);
         clearInterval(currentGame);
         resetCards();
+        score = 1000;
+        scoreSpan.innerHTML = 1000;
         wordSpan.innerHTML = "Start New Game";
         timerSpan.innerHTML = 5;
+        scoreDiv.classList.remove("correct", "incorrect");
+        btnLingoBingo.classList.add("disabled");
+        userTiles.forEach((card) => card.classList.add("disabled"));
     }
 
     
     // stop game
     function stopGame() {
-        btnBingo.classList.add("disabled");
+        btnLingoBingo.classList.add("disabled");
         activeGame = false;
         clearInterval(cardInterval);
         clearInterval(currentGame);
         confetti.stop();
         if (userWon) {
             // console.log("User Won"); // TEST
+            timerSpan.innerHTML = "You Win";
             setTimeout(() => {
                 scoreDiv.classList.add("correct");
             }, 500);
             confetti.start(5000);
         } else if (aiWon) {
             // console.log("AI won"); // TEST
+            timerSpan.innerHTML = "Game Over";
             scoreSpan.innerHTML = "Game Over";
             setTimeout(() => {
                 scoreDiv.classList.add("incorrect");
@@ -451,9 +456,9 @@ document.addEventListener("DOMContentLoaded", () => {
             let aiCard = document.querySelector(`#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji[data-emoji~="${word.word}"]`);
             // give a delay to allow user to guess first in case of tie
             markAI = setTimeout(() => {
-                aiCard.parentNode.parentNode.parentNode.classList.add("correct");
+                if (activeGame) aiCard.parentNode.parentNode.parentNode.classList.add("correct");
                 checkCards("ai", game);
-            }, 4500); // delay 4.5s to allow user to call Bingo first, in case of tie
+            }, 4500); // delay 4.5s to allow user to call LingoBingo first, in case of tie
         }
     }
 
@@ -534,10 +539,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // user click event
     // NON-TEST! FIX: this should be in a function instead
-    userCardsList = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back");
-    userCardsList.forEach((card) => {
+    userTiles.forEach((card) => {
         card.addEventListener("click", () => {
-            if(activeGame) { // only if the game is active
+            if (activeGame) { // only if the game is active
                 // https://stackoverflow.com/a/8217584
                 // check if clicked card exists inside of the answerList[]
                 if (answerList.some(word => word.word === card.firstElementChild.dataset.emoji)) {
@@ -567,8 +571,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // game function: user clicks to check for Bingo
-    btnBingo.addEventListener("click", () => {
+    // game function: user clicks to check for LingoBingo
+    btnLingoBingo.addEventListener("click", () => {
+        btnLingoBingo.classList.add("disabled"); // temporarily disable LingoBingo button
         checkCards("user", game);
     });
 

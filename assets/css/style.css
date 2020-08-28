@@ -228,7 +228,7 @@ main {
     animation: wiggleCard 0.5s linear;
 }
 
-/* user has incorrect Bingo */
+/* user has incorrect LingoBingo */
 #user-board.incorrect .emoji-card {
     border-radius: var(--borderRadius);
     box-shadow: 0 0 4px 4px rgba(var(--red), 1);
@@ -242,7 +242,7 @@ main {
 
 /* STATS */
 #btn-new {grid-area: btn-new;}
-#btn-bingo {grid-area: btn-bingo;}
+#btn-lingobingo {grid-area: btn-lingobingo;}
 #timer {grid-area: timer;}
 #score {grid-area: score;}
 #username {grid-area: username;}
@@ -256,13 +256,13 @@ main {
     grid-template-rows: repeat(5, 1fr);
     grid-template-areas:
         "btn-new"
-        "btn-bingo"
+        "btn-lingobingo"
         "timer"
         "score"
         "username";
 }
 
-#btn-new, #btn-bingo, #timer, #score, #username {
+#btn-new, #btn-lingobingo, #timer, #score, #username {
     width: 100%;
     height: 90%;
     display: grid;
@@ -395,9 +395,9 @@ footer nav .emoji {
     z-index: 1;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     background-color: rgba(var(--black), 0.75);
 }
 
@@ -459,7 +459,7 @@ footer nav .emoji {
     0%, 100% {transform: translateX(0) rotateY(180deg);}
 }
 
-/* user has incorrect Bingo */
+/* user has incorrect LingoBingo */
 @keyframes wiggleBoard {
     8%, 41% {transform: translateX(-10px);}
     25%, 58% {transform: translateX(10px);}
