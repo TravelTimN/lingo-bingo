@@ -297,11 +297,19 @@ document.addEventListener("DOMContentLoaded", () => {
             populateAnswerList(selectedLanguage);
             gameTimer();
         }, 5000);
-        // generate emoji list for user and AI
-        userCards = getRandomCards(allCards, 25);
-        aiCards = getRandomCards(allCards, 25);
-        // cardList = getRandomCards(allCards, 3); // testing shorter games
-        cardList = getRandomCards(allCards, allCards.length);
+        // instead of obtaining all languages from the library, only get selectedLanguage
+        // https://stackoverflow.com/a/54907643
+        let keys = ["word", "emoji", "aria", selectedLanguage]; // only get these keys from [allCards]
+        let allCardsSelectedLanguage = allCards.map(elem => {
+            let obj = {};
+            keys.forEach(key => obj[key] = elem[key]);
+            return obj;
+        });
+        // generate emoji list for the current game, user, and AI
+        cardList = getRandomCards(allCardsSelectedLanguage, 100); // only get 100 random cards
+        // cardList = getRandomCards(allCards, allCards.length); // entire length of [allCards] *original TEST*
+        userCards = getRandomCards(cardList, 25); // assign 25 random cards to User from [cardList]
+        aiCards = getRandomCards(cardList, 25); // assign 25 random cards to AI from [cardList]
         // populate the User & AI boards
         populateCards(userCards, "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         populateCards(aiCards, "#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
@@ -385,15 +393,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // helper: get random number of items from array
     // https://stackoverflow.com/a/19270021
     function getRandomCards(array, num) {
-        let result = new Array(num);
+        let randomArray = new Array(num);
         let len = array.length;
         let selectedCards = new Array(len);
         while (num--) {
             let card = Math.floor(Math.random() * len);
-            result[num] = array[card in selectedCards ? selectedCards[card] : card];
+            randomArray[num] = array[card in selectedCards ? selectedCards[card] : card];
             selectedCards[card] = --len in selectedCards ? selectedCards[len] : len;
         }
-        return result;
+        return randomArray;
     }
 
 
@@ -484,13 +492,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // synthesis supported
             msg = new SpeechSynthesisUtterance();
             switch (lang) {
-                case "gb":
-                    msgVoice = voices[4];
-                    msgLang = "en-GB";
-                    break;
                 case "de":
                     msgVoice = voices[2];
                     msgLang = "de-DE";
+                    break;
+                case "gb":
+                    msgVoice = voices[4];
+                    msgLang = "en-GB";
                     break;
                 case "mx":
                     msgVoice = voices[7];
@@ -500,9 +508,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     msgVoice = voices[8];
                     msgLang = "fr-FR";
                     break;
+                case "in":
+                    msgVoice = voices[9];
+                    msgLang = "hi-IN";
+                    break;
                 case "it":
                     msgVoice = voices[11];
                     msgLang = "it-IT";
+                    break;
+                case "jp":
+                    msgVoice = voices[12];
+                    msgLang = "ja-JP";
+                    break;
+                case "kr":
+                    msgVoice = voices[13];
+                    msgLang = "ko-KR";
                     break;
                 case "nl":
                     msgVoice = voices[14];
@@ -515,6 +535,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 case "pt":
                     msgVoice = voices[16];
                     msgLang = "pt-BR";
+                    break;
+                case "ru":
+                    msgVoice = voices[17];
+                    msgLang = "ru-RU";
+                    break;
+                case "cn":
+                    msgVoice = voices[18];
+                    msgLang = "zh-CN";
                     break;
             }
             msg.voice = msgVoice;
