@@ -29,6 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const players = ["user", "ai", "goal"];
     const games = ["Columns", "Rows", "Corners", "Cross", "Outside", "Inside", "Blackout"];
 
+    // https://stackoverflow.com/a/60615515
+    const languages = [];
+    Object.values(languageList.options).forEach((option) => languages.push(option.value));
+    console.log(languages);
+
     // dynamic variables
     let userWon, aiWon, activeGame, pointsDeducted = false;
     let answerList = [];
@@ -306,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return obj;
         });
         // generate emoji list for the current game, user, and AI
-        cardList = getRandomCards(allCardsSelectedLanguage, 100); // only get 100 random cards
+        cardList = getRandomCards(allCardsSelectedLanguage, 60); // only get 60 random cards (max. 5min game)
         // cardList = getRandomCards(allCards, allCards.length); // entire length of [allCards] *original TEST*
         userCards = getRandomCards(cardList, 25); // assign 25 random cards to User from [cardList]
         aiCards = getRandomCards(cardList, 25); // assign 25 random cards to AI from [cardList]
@@ -319,6 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
             generateGoalGrid(game);
         }, 3500);
         setTimeout(() => {
+            // chickenDinner(); // *TEST* only here to test localStorage variables quickly!
             btnLingoBingo.classList.remove("disabled"); // enable the LingoBingo button
             userTiles.forEach((card) => card.classList.remove("disabled")); // enable user cards
         }, 5000);
@@ -362,12 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(currentGame);
         confetti.stop();
         if (userWon) {
-            // console.log("User Won"); // TEST
-            timerSpan.innerHTML = "You Win";
-            setTimeout(() => {
-                scoreDiv.classList.add("correct");
-            }, 500);
-            confetti.start(5000);
+            chickenDinner();
         } else if (aiWon) {
             // console.log("AI won"); // TEST
             timerSpan.innerHTML = "Game Over";
@@ -376,6 +377,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 scoreDiv.classList.add("incorrect");
             }, 500);
         }
+    }
+
+
+    // winner winner chicken dinner!
+    function chickenDinner() {
+        // console.log("User Won"); // TEST
+        timerSpan.innerHTML = "You Win";
+        setTimeout(() => {
+            scoreDiv.classList.add("correct");
+        }, 500);
+        confetti.start(5000);
+        // localStorage
+        let langGameScore = selectedLanguage + game + "Score";
+        if (score > localStorage.getItem(langGameScore)) {
+            // New High Score!
+            localStorage.setItem(langGameScore, score);
+            alert(`NEW HIGH SCORE!\n${score}`);
+        } else {
+            // current score is not higher than previous high score
+        }
+        // TO-DO: option to delete localStorage items
+        // localStorage.removeItem(langGameScore); // delete localStorage item
     }
 
 
