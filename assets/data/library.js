@@ -1,4 +1,5 @@
-let allCards = [{
+let allCards = [
+    {
         "word": "airplane",
         "emoji": "U+2708",
         "aria": "airplane",
@@ -3271,7 +3272,7 @@ let allCards = [{
         "emoji": "U+1F4A9",
         "aria": "pile of poo",
         "gb": "the poop",
-        "de": "die Scheiße",
+        "de": "der Kothaufen",
         "mx": "la caca",
         "fr": "la merde",
         "ie": "an poop",
@@ -4446,7 +4447,7 @@ let allCards = [{
     },
     {
         "word": "video-game",
-        "emoji": "U+1F3A",
+        "emoji": "U+1F3AE",
         "aria": "video game",
         "gb": "the video game",
         "de": "das Videospiel",
