@@ -605,6 +605,12 @@ document.addEventListener("DOMContentLoaded", () => {
             scoreDiv.classList.remove(answer);
             if (answer == "incorrect") card.classList.remove(answer);
             scoreSpan.innerHTML = score;
+            // user lost all points, so the AI automatically wins - stopGame()
+            if (score <= 0) {
+                aiWon = true;
+                userWon = false;
+                stopGame();
+            }
         }, 1000);
     }
 
