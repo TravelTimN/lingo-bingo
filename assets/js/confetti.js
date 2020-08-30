@@ -1,4 +1,4 @@
-var confetti = {
+let confetti = {
 	maxCount: 150,		//set max confetti count
 	speed: 2,			//set the particle animation speed
 	frameInterval: 15,	//the confetti animation frame interval in milliseconds
@@ -25,15 +25,15 @@ var confetti = {
 	confetti.isPaused = isConfettiPaused;
 	confetti.remove = removeConfetti;
 	confetti.isRunning = isConfettiRunning;
-	var supportsAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
-	var colors = ["rgba(30,144,255,", "rgba(107,142,35,", "rgba(255,215,0,", "rgba(255,192,203,", "rgba(106,90,205,", "rgba(173,216,230,", "rgba(238,130,238,", "rgba(152,251,152,", "rgba(70,130,180,", "rgba(244,164,96,", "rgba(210,105,30,", "rgba(220,20,60,"];
-	var streamingConfetti = false;
-	var animationTimer = null;
-	var pause = false;
-	var lastFrameTime = Date.now();
-	var particles = [];
-	var waveAngle = 0;
-	var context = null;
+	let supportsAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
+	let colors = ["rgba(255,23,68," /*#ff1744*/, "rgba(244,67,54," /*#f44336*/, "rgba(255,61,0,0," /*#ff3d00*/, "rgba(255,152,0," /*#ff9800*/, "rgba(255,202,40," /*#ffca28*/, "rgb(255,241,118," /*#fff176*/, "rgba(255,255,0," /*#ffff00*/, "rgba(0,200,83," /*#00c853*/, "rgba(118,255,3," /*#76ff03*/, "rgba(41,121,255," /*#2979ff*/, "rgba(0,145,234," /*#0091ea*/, "rgba(213,0,249," /*#d500f9*/, "rgba(170,0,255," /*#aa00ff*/];
+	let streamingConfetti = false;
+	let animationTimer = null;
+	let pause = false;
+	let lastFrameTime = Date.now();
+	let particles = [];
+	let waveAngle = 0;
+	let context = null;
 
 	function resetParticle(particle, width, height) {
 		particle.color = colors[(Math.random() * colors.length) | 0] + (confetti.alpha + ")");
@@ -74,8 +74,8 @@ var confetti = {
 			context.clearRect(0, 0, window.innerWidth, window.innerHeight);
 			animationTimer = null;
 		} else {
-			var now = Date.now();
-			var delta = now - lastFrameTime;
+			let now = Date.now();
+			let delta = now - lastFrameTime;
 			if (!supportsAnimationFrame || delta > confetti.frameInterval) {
 				context.clearRect(0, 0, window.innerWidth, window.innerHeight);
 				updateParticles();
@@ -87,8 +87,8 @@ var confetti = {
 	}
 
 	function startConfetti(timeout, min, max) {
-		var width = window.innerWidth;
-		var height = window.innerHeight;
+		let width = window.innerWidth;
+		let height = window.innerHeight;
 		window.requestAnimationFrame = (function() {
 			return window.requestAnimationFrame ||
 				window.webkitRequestAnimationFrame ||
@@ -99,7 +99,7 @@ var confetti = {
 					return window.setTimeout(callback, confetti.frameInterval);
 				};
 		})();
-		var canvas = document.getElementById("confetti-canvas");
+		let canvas = document.getElementById("confetti-canvas");
 		if (canvas === null) {
 			canvas = document.createElement("canvas");
 			canvas.setAttribute("id", "confetti-canvas");
@@ -114,14 +114,14 @@ var confetti = {
 			context = canvas.getContext("2d");
 		} else if (context === null)
 			context = canvas.getContext("2d");
-		var count = confetti.maxCount;
+		let count = confetti.maxCount;
 		if (min) {
 			if (max) {
 				if (min == max)
 					count = particles.length + max;
 				else {
 					if (min > max) {
-						var temp = min;
+						let temp = min;
 						min = max;
 						max = temp;
 					}
@@ -163,9 +163,9 @@ var confetti = {
 	}
 
 	function drawParticles(context) {
-		var particle;
-		var x, y, x2, y2;
-		for (var i = 0; i < particles.length; i++) {
+		let particle;
+		let x, y, x2, y2;
+		for (let i = 0; i < particles.length; i++) {
 			particle = particles[i];
 			context.beginPath();
 			context.lineWidth = particle.diameter;
@@ -173,7 +173,7 @@ var confetti = {
 			x = x2 + particle.diameter / 2;
 			y2 = particle.y + particle.tilt + particle.diameter / 2;
 			if (confetti.gradient) {
-				var gradient = context.createLinearGradient(x, particle.y, x2, y2);
+				let gradient = context.createLinearGradient(x, particle.y, x2, y2);
 				gradient.addColorStop("0", particle.color);
 				gradient.addColorStop("1.0", particle.color2);
 				context.strokeStyle = gradient;
@@ -186,11 +186,11 @@ var confetti = {
 	}
 
 	function updateParticles() {
-		var width = window.innerWidth;
-		var height = window.innerHeight;
-		var particle;
+		let width = window.innerWidth;
+		let height = window.innerHeight;
+		let particle;
 		waveAngle += 0.01;
-		for (var i = 0; i < particles.length; i++) {
+		for (let i = 0; i < particles.length; i++) {
 			particle = particles[i];
 			if (!streamingConfetti && particle.y < -15)
 				particle.y = height + 100;
