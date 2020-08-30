@@ -63,7 +63,7 @@
         font-size: 2em;
         height: var(--card);
         border-radius: var(--borderRadius);
-        box-shadow: 0 0 8px 0 rgba(var(--black), 0.5);
+        box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
     }
 
     #user-board .emoji-card-inner {
@@ -79,7 +79,7 @@
 
     #user-board .emoji-card-back {
         border-radius: var(--borderRadius);
-        box-shadow: 0 0 8px 0 rgba(var(--black), 0.5);
+        box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
     }
 
     #user-board .emoji-card .emoji-card-inner .emoji-card-back:hover {

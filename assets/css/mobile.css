@@ -155,7 +155,7 @@ main {
 
 .emoji {
     outline: none;
-    font-size: 3em;
+    font-size: 10vw;
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     vertical-align: middle;
     text-shadow: 2px 2px 2px rgba(var(--black), 0.5);
@@ -182,7 +182,7 @@ main {
     align-items: center;
     height: var(--card);
     border-radius: var(--borderRadius);
-    box-shadow: 0 0 8px 0 rgba(var(--black), 0.5);
+    box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
     background: repeating-linear-gradient(-45deg,
             rgba(var(--blue), 1),
             rgba(var(--blue), 1) 15px,
@@ -213,7 +213,7 @@ main {
 #user-board .emoji-card-back {
     transform: rotateY(180deg);
     border-radius: var(--borderRadius);
-    box-shadow: 0 0 8px 0 rgba(var(--black), 0.5);
+    box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
 }
 
 /* #user-board .emoji-card .emoji-card-inner .emoji-card-back:hover {
