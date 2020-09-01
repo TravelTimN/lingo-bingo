@@ -27,12 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
     const players = ["user", "ai", "goal"];
-    const games = ["Columns", "Rows", "Corners", "Cross", "Outside", "Inside", "Blackout"];
-
+    const games = ["Blackout", "Columns", "Corners", "Cross", "Inside", "Outside", "Rows"];
+    // const languages = ["cn", "de", "fr", "gb", "ie", "in", "it", "jp", "kr", "mx", "nl", "pl", "pt", "ru"];
     // https://stackoverflow.com/a/60615515
-    const languages = [];
-    Object.values(languageList.options).forEach((option) => languages.push(option.value));
-    console.log(languages);
+    // const languages = [];
+    // Object.values(languageList.options).forEach((option) => languages.push(option.value));
+    // console.log(languages);
 
     // dynamic variables
     let userWon, aiWon, activeGame, pointsDeducted = false;
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    
+
     // game logic: flag selection
     flagSelection();
     function flagSelection() {
@@ -283,8 +283,8 @@ document.addEventListener("DOMContentLoaded", () => {
             languageSelection(flag);
         });
     }
-    
-    
+
+
     // game logic: start button
     btnStart.addEventListener("click", () => {
         selectedGame(gameList);
@@ -358,47 +358,58 @@ document.addEventListener("DOMContentLoaded", () => {
         userTiles.forEach((card) => card.classList.add("disabled"));
     }
 
-    
-    // stop game
+
+    // stop game : disabled game settings (not reset) because someone won!
     function stopGame() {
         toHide.forEach((item) => item.style.display = "none");
-        btnLingoBingo.classList.add("disabled");
+        btnLingoBingo.classList.add("disabled"); // disable btnLingoBingo
         activeGame = false;
         clearInterval(cardInterval);
         clearInterval(currentGame);
-        confetti.stop();
+        confetti.stop(); // reset confetti
+        chickenDinner(); // winner-winner chicken-dinner!
+    }
+
+
+    // user or ai won : winner-winner chicken-dinner!
+    function chickenDinner() {
+        // get existing localStorage values for specific game setup
+        let langGame = `${selectedLanguage}${game}`;
+        // localStorage as Object: https://stackoverflow.com/a/2010948
+        let getGameLS = JSON.parse(localStorage.getItem(langGame));
+        let userWinCount, aiWinCount, highScore;
+        if (getGameLS) {
+            userWinCount = getGameLS.userWon;
+            aiWinCount = getGameLS.aiWon;
+            highScore = getGameLS.highScore;
+        } else {
+            // bit redundant, but single-line doesn't work (var1, var2, var3 = 0;)
+            userWinCount = 0;
+            aiWinCount = 0;
+            highScore = 0;
+        }
+        // who won? User or AI
         if (userWon) {
-            chickenDinner();
+            // console.log("User Won"); // TEST
+            userWinCount = ++userWinCount; // increment userWon count
+            highScore = (score > highScore) ? score : highScore; // set to 'score' if higher than 'highScore'
+            timerSpan.innerHTML = "You Win";
+            setTimeout(() => {
+                scoreDiv.classList.add("correct");
+            }, 500);
+            confetti.start(5000);
         } else if (aiWon) {
             // console.log("AI won"); // TEST
+            aiWinCount = ++aiWinCount; // increment aiWon count
             timerSpan.innerHTML = "Game Over";
             scoreSpan.innerHTML = "Game Over";
             setTimeout(() => {
                 scoreDiv.classList.add("incorrect");
             }, 500);
         }
-    }
-
-
-    // winner winner chicken dinner!
-    function chickenDinner() {
-        // console.log("User Won"); // TEST
-        timerSpan.innerHTML = "You Win";
-        setTimeout(() => {
-            scoreDiv.classList.add("correct");
-        }, 500);
-        confetti.start(5000);
-        // localStorage
-        let langGameScore = selectedLanguage + game + "Score";
-        if (score > localStorage.getItem(langGameScore)) {
-            // New High Score!
-            localStorage.setItem(langGameScore, score);
-            alert(`NEW HIGH SCORE!\n${score}`);
-        } else {
-            // current score is not higher than previous high score
-        }
-        // TO-DO: option to delete localStorage items
-        // localStorage.removeItem(langGameScore); // delete localStorage item
+        // set the new localStorage variables : must stringify localStorage Object
+        let setGameLS = {"userWon": userWinCount, "aiWon": aiWinCount, "highScore": highScore};
+        localStorage.setItem(langGame, JSON.stringify(setGameLS));
     }
 
 
