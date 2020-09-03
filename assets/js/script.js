@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnStart = document.getElementById("btn-start");
     const btnSettings = document.getElementById("btn-settings");
     const btnAudio = document.getElementById("btn-audio");
+    const btnScoreboard = document.getElementById("btn-scoreboard");
     const languageList = document.getElementById("language-list");
     const gameList = document.getElementById("game-list");
     const flags = document.querySelectorAll(".flag");
@@ -21,14 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const modals = document.querySelectorAll(".modal");
     const modalSettings = document.getElementById("modal-settings");
     const modalInfo = document.getElementById("modal-info");
-    const modalLeaderboard = document.getElementById("modal-leaderboard");
-    const modalClose = document.querySelectorAll(".close");
+    const modalScoreboard = document.getElementById("modal-scoreboard");
+    const modalClose = document.querySelectorAll(".modal-close");
     const toHide = document.querySelectorAll("small, br");
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
     const players = ["user", "ai", "goal"];
     const games = ["Blackout", "Columns", "Corners", "Cross", "Inside", "Outside", "Rows"];
-    // const languages = ["cn", "de", "fr", "gb", "ie", "in", "it", "jp", "kr", "mx", "nl", "pl", "pt", "ru"];
+    const languages = ["cn", "de", "fr", "gb", "ie", "in", "it", "jp", "kr", "mx", "nl", "pl", "pt", "ru"];
     // https://stackoverflow.com/a/60615515
     // const languages = [];
     // Object.values(languageList.options).forEach((option) => languages.push(option.value));
@@ -47,6 +48,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     userTiles.forEach((card) => card.classList.add("disabled")); // disable user cards on load
+
+
+    // generate score board modal data
+    btnScoreboard.addEventListener("click", () => generateScoreboard());
+    function generateScoreboard() {
+        languages.forEach((btnLang) => {
+            games.forEach((btnGame) => {
+                // get localStorage information per game
+                let langGame = `${btnLang}${btnGame}`;
+                let getGameLS = JSON.parse(localStorage.getItem(langGame));
+                let userWinCount, aiWinCount, highScore;
+                if (getGameLS) {
+                    userWinCount = getGameLS.userWon;
+                    aiWinCount = getGameLS.aiWon;
+                    highScore = getGameLS.highScore;
+                } else {
+                    // bit redundant, but single-line doesn't work (var1, var2, var3 = 0;)
+                    userWinCount = 0;
+                    aiWinCount = 0;
+                    highScore = 0;
+                }
+                // tbody: generate rows
+                let tbody = document.getElementById("tbody");
+                let br = document.createElement("br");
+                let tr = tbody.insertRow();
+                // cell: flag + game
+                let td0 = tr.insertCell(0);
+                let flagEl = document.createElement("img");
+                flagEl.src = `assets/svg/${btnLang}.svg`;
+                flagEl.alt = `${btnLang} flag`;
+                flagEl.classList.add("flag");
+                let gameEl = document.createTextNode(btnGame);
+                td0.appendChild(flagEl);
+                td0.appendChild(br);
+                td0.appendChild(gameEl);
+                // cell: user wins
+                let td1 = tr.insertCell(1);
+                //////
+                let winsEl = document.createTextNode(userWinCount);
+                td1.appendChild(winsEl);
+                // cell: ai wins
+                let td2 = tr.insertCell(2);
+                let losesEl = document.createTextNode(aiWinCount);
+                td2.appendChild(losesEl);
+                // cell: high score
+                let td3 = tr.insertCell(3);
+                let scoreEl = document.createTextNode(highScore);
+                td3.appendChild(scoreEl);
+                // cell: play button (specific game)
+                let td4 = tr.insertCell(4);
+                let buttonEl = document.createElement("button");
+                buttonEl.innerHTML = "Play";
+                buttonEl.classList.add("btn-play");
+                buttonEl.addEventListener("click", function() {
+                    languageList.value = btnLang; // update languageList selected value
+                    selectedLanguage = btnLang; // update selectedLanguage global variable
+                    gameList.value = btnGame; // update gameList selected value
+                    game = btnGame; // update game global variable
+                    flags.forEach((flag) => {
+                        languageSelection(flag); // update all .flags (not score board)
+                    });
+                    generateGameSettings(game); // generate the game settings
+                    startGame(); // start the game
+                });
+                td4.appendChild(buttonEl);
+            });
+        });
+    }
 
 
     // helper: generates global variables based on 'games' for User/AI/Goal, then calls getGameCards()
@@ -261,24 +330,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // game logic: function for language selection
     function languageSelection(flag) {
+        flag.src = `assets/svg/${selectedLanguage}.svg`;
+        flag.alt = `${selectedLanguage} flag`;
+        document.querySelector("link#favicon").href = `assets/svg/${selectedLanguage}.svg`;
+        // recursive function calling self
         languageList.addEventListener("change", () => {
             selectedLanguage = languageList.options[languageList.selectedIndex].value;
-            flag.src = `assets/svg/${selectedLanguage}.svg`;
-            flag.alt = `${selectedLanguage} flag`;
-            document.querySelector("link#favicon").href = `assets/svg/${selectedLanguage}.svg`;
-            // change btnAudio emoji if a muted-language and disable it
-            if (mutedLangs.indexOf(selectedLanguage) >= 0) {
-                btnAudio.innerHTML = "🔇";
-                btnAudio.style.pointerEvents = "none";
-            } else {
-                btnAudio.style.pointerEvents = "auto";
-            }
+            languageSelection(flag);
         });
     }
+
 
     // game logic: flag selection
     flagSelection();
     function flagSelection() {
+        selectedLanguage = languageList.options[languageList.selectedIndex].value;
         flags.forEach((flag) => {
             languageSelection(flag);
         });
@@ -287,6 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // game logic: start button
     btnStart.addEventListener("click", () => {
+        selectedLanguage = languageList.options[languageList.selectedIndex].value;
         selectedGame(gameList);
         startGame();
     });
@@ -295,8 +362,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // game logic: start game
     function startGame() {
         wordSpan.innerHTML = "... LOADING GAME ...";
-        modalSettings.style.display = "none"; // close modalSettings
-        selectedLanguage = languageList.options[languageList.selectedIndex].value;
+        modals.forEach((modal) => {
+            modal.style.display = "none"; // close all modals
+        });
+        // change btnAudio emoji if a muted-language and disable it
+        if (mutedLangs.indexOf(selectedLanguage) >= 0) {
+            btnAudio.innerHTML = "🔇";
+            btnAudio.style.pointerEvents = "none";
+        } else {
+            btnAudio.style.pointerEvents = "auto";
+        }
         // start the game: words and timer
         currentGame = setInterval(() => {
             populateAnswerList(selectedLanguage);
@@ -331,9 +406,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    btnSettings.addEventListener("click", () => {
-        resetGame();
-    });
+    btnSettings.addEventListener("click", () => resetGame());
+    btnScoreboard.addEventListener("click", () => resetGame());
     // reset game
     function resetGame() {
         confetti.stop(); // stop confetti
@@ -664,6 +738,10 @@ document.addEventListener("DOMContentLoaded", () => {
         modalSettings.style.display = "block";
         resetGame();
     });
+    // modalScoreboard
+    btnScoreboard.addEventListener("click", () => {
+        modalScoreboard.style.display = "block";
+    });
     // close modals
     modalClose.forEach((close) => {
         close.addEventListener("click", () => {
@@ -673,8 +751,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
     window.addEventListener("click", (e) => {
-        if (e.target == modalSettings) {
-            modalSettings.style.display = "none";
+        if (e.target == modalSettings || e.target == modalScoreboard) {
+            modals.forEach((modal) => {
+                modal.style.display = "none";
+            });
         }
     });
 
