@@ -48,7 +48,7 @@ body {
 a {outline: none;}
 
 /* BUTTONS */
-button:not(#btn-start) {width: 90%;}
+button:not(#btn-start):not(.btn-play) {width: 90%;}
 button {
     cursor: pointer;
     background: rgba(var(--green), 1);
@@ -92,6 +92,7 @@ select {cursor: pointer;}
 .flag {
     width: 2.5em;
     height: auto;
+    vertical-align: middle;
     border-radius: 4px;
     box-shadow: 2px 2px 2px rgba(var(--black), 0.5);
 }
@@ -415,50 +416,124 @@ footer nav .emoji {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background-color: rgba(var(--black), 0.75);
+    background-color: rgba(var(--black), 0.90);
 }
 
-.modal-content {
+.modal-container {
     position: relative;
-    background-color: rgba(var(--greyL5), 1);
+    border-radius: var(--borderRadius);
+    background-color: rgba(var(--blue), 1);
+    color: rgba(var(--white), 1);
     margin: 5% auto;
     width: 90%;
     height: 90%;
     animation: 0.4s slideIn ease-in-out;
 }
 
-.close {
-    color: rgba(var(--white), 1);
-    float: right;
+.modal-header {
+    display: grid;
+    align-content: center;
+    padding: 5px;
+    border-top-left-radius: var(--borderRadius);
+    border-top-right-radius: var(--borderRadius);
     font-size: 2em;
     font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: rgba(var(--black), 1);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.modal-header {
-    padding: 2px 16px;
-    background-color: rgba(var(--blue), 1);
-    color: rgba(var(--white), 1);
-    height: 20%;
+    letter-spacing: 0.25em;
+    text-align: center;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    height: 10%;
 }
 
 .modal-body {
-    padding: 2px 16px;
-    height: 60%;
+    margin: 0 0.5em;
+    height: 80%;
+    border-radius: var(--borderRadius);
+    background-color: rgba(var(--greyL5), 1);
+    color: rgba(var(--black), 1);
 }
 
-.modal-footer {
-    padding: 2px 16px;
-    background-color: rgba(var(--blue), 1);
-    color: rgba(var(--white), 1);
-    height: 20%;
+.modal-close {
+    display: grid;
+    align-content: center;
+    height: 10%;
+    padding: 5px;
+    border-bottom-left-radius: var(--borderRadius);
+    border-bottom-right-radius: var(--borderRadius);
+    font-size: 1.5em;
+    font-weight: bold;
+    letter-spacing: 0.25em;
+    text-align: center;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease-in-out;
 }
+
+.modal-close:hover {
+    cursor: pointer;
+    background-color: rgba(var(--blueD4), 1);
+}
+
+/* SCORE BOARD */
+#modal-scoreboard .modal-body {overflow-y: scroll;}
+
+table {
+    border-collapse: separate;
+    width: 100%;
+    border-spacing: 0 8px;
+}
+
+table thead tr th {
+    position: sticky;
+    top: 0;
+    color: rgba(var(--white), 1);
+    background-color: rgba(var(--blueD4), 1);
+    letter-spacing: 2px;
+    line-height: 2;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(var(--black), 1);
+}
+
+table thead tr th:not(:last-child) {
+    border-right: 1px solid rgba(var(--white), 0.75);
+}
+
+table thead tr th,
+table td {
+    padding: 2px 0;
+    text-align: center;
+}
+
+table tbody td {
+    background-color: rgba(var(--white), 1);
+}
+
+table td img.flag {
+    width: 1.5em;
+}
+
+table tbody tr {
+    box-shadow: 0px 0px 4px 0px rgba(var(--blue), 0.5);
+}
+
+table tbody tr:hover td {
+    background-color: rgba(var(--blue), 0.25);
+}
+
+.modal-body::-webkit-scrollbar-track {
+    border-top-right-radius: var(--borderRadius);
+    border-bottom-right-radius: var(--borderRadius);
+    background-color: rgba(var(--blueL4), 1);
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--blueD4), 1);
+    border-top-right-radius: var(--borderRadius);
+    border-bottom-right-radius: var(--borderRadius);
+}
+
 
 
 /* KEYFRAME ANIMATIONS */
