@@ -137,11 +137,8 @@
 
     <!-- modal: game settings -->
     <div id="modal-settings" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Game Settings</h2>
-            </div>
+        <div class="modal-container">
+            <div class="modal-header">SETTINGS</div>
             <div class="modal-body">
                 <img src="assets/svg/gb.svg" alt="gb flag" class="flag">
                 <select name="language-list" id="language-list">
@@ -172,9 +169,40 @@
                 </select>
                 <button id="btn-start">Start Game</button>
             </div>
-            <div class="modal-footer">
-                <h3>Modal Footer</h3>
+            <div class="modal-close">CLOSE</div>
+        </div>
+    </div>
+
+
+    <!-- modal: scoreboard -->
+    <div id="modal-scoreboard" class="modal">
+        <div class="modal-container">
+            <div class="modal-header">SCORE BOARD</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Won</th>
+                            <th>Lost</th>
+                            <th>Score</th>
+                            <th>Play</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <!-- generates row for each language/game with localStorage -->
+                        <!-- example -->
+                        <!-- <tr>
+                            <td><img src="assets/svg/gb.svg" alt="gb flag" class="flag"><br>Corners</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>7500</td>
+                            <td><button id="btn-start">Play</button></td>
+                        </tr> -->
+                    </tbody>
+                </table>
             </div>
+            <div class="modal-close">CLOSE</div>
         </div>
     </div>
 
@@ -191,7 +219,7 @@
             <span id="btn-info" class="emoji" role="img" aria-label="red question mark">&#x2753;</span>
 
             <!-- modal: leader board -->
-            <span id="btn-leaderboard" class="emoji" role="img" aria-label="trophy">&#x1F3C6;</span>
+            <span id="btn-scoreboard" class="emoji" role="img" aria-label="trophy">&#x1F3C6;</span>
         </nav>
     </footer>
 
