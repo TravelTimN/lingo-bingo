@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // constant variables
     const userBoard = document.getElementById("user-board");
     const userTiles = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back");
-    const aiBoard = document.getElementById("ai-board");
     const btnNew = document.getElementById("btn-new");
     const btnLingoBingo = document.getElementById("btn-lingobingo");
     const btnStart = document.getElementById("btn-start");
@@ -18,28 +17,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const timerSpan = document.getElementById("timer-span");
     const scoreSpan = document.getElementById("score-span");
     const scoreDiv = document.getElementById("score");
+    const gameSpan = document.getElementById("game-span");
     const wordSpan = document.getElementById("word-span");
     const modals = document.querySelectorAll(".modal");
     const modalSettings = document.getElementById("modal-settings");
     const modalInfo = document.getElementById("modal-info");
     const modalScoreboard = document.getElementById("modal-scoreboard");
     const modalClose = document.querySelectorAll(".modal-close");
-    const toHide = document.querySelectorAll("small, br");
+    const toHide = document.querySelectorAll("small, br:not(.ignore)");
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
     const players = ["user", "ai", "goal"];
     const games = ["Blackout", "Columns", "Corners", "Cross", "Inside", "Outside", "Rows"];
-    const languages = ["cn", "de", "fr", "gb", "ie", "in", "it", "jp", "kr", "mx", "nl", "pl", "pt", "ru"];
-    // https://stackoverflow.com/a/60615515
-    // const languages = [];
-    // Object.values(languageList.options).forEach((option) => languages.push(option.value));
-    // console.log(languages);
+    const languages = ["cn", "nl", "gb", "fr", "de", "in", "ie", "it", "jp", "kr", "pl", "pt", "ru", "mx"];
 
     // dynamic variables
     let userWon, aiWon, activeGame, pointsDeducted = false;
     let answerList = [];
     let score = 1000;
-    let userCards, aiCards, goalCards, selectedLanguage, game, currentGame, cardInterval, cardList, markAI, result, resultList;
+    let userCards, aiCards, selectedLanguage, game, langGame, getGameLS,
+        userWinCount, aiWinCount, highScore, gameSetup, enableCards,
+        currentGame, cardInterval, cardList, markAI, result, resultList;
 
     // speech syntheses
     let msg, msgVoice, msgLang, voices;
@@ -51,28 +49,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // generate score board modal data
-    btnScoreboard.addEventListener("click", () => generateScoreboard());
+    generateScoreboard();
     function generateScoreboard() {
         languages.forEach((btnLang) => {
             games.forEach((btnGame) => {
                 // get localStorage information per game
-                let langGame = `${btnLang}${btnGame}`;
-                let getGameLS = JSON.parse(localStorage.getItem(langGame));
-                let userWinCount, aiWinCount, highScore;
+                langGame = `${btnLang}${btnGame}`;
+                getGameLS = JSON.parse(localStorage.getItem(langGame));
                 if (getGameLS) {
                     userWinCount = getGameLS.userWon;
                     aiWinCount = getGameLS.aiWon;
                     highScore = getGameLS.highScore;
                 } else {
-                    // bit redundant, but single-line doesn't work (var1, var2, var3 = 0;)
-                    userWinCount = 0;
-                    aiWinCount = 0;
-                    highScore = 0;
+                    userWinCount = aiWinCount = highScore = 0;
                 }
                 // tbody: generate rows
                 let tbody = document.getElementById("tbody");
                 let br = document.createElement("br");
                 let tr = tbody.insertRow();
+                tr.id = `${btnLang}${btnGame}`;
                 // cell: flag + game
                 let td0 = tr.insertCell(0);
                 let flagEl = document.createElement("img");
@@ -151,38 +146,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 cards[2].forEach((card) => {
                     card.classList.add("correct");
                 });
-                // //----- TEST (start)
-                // // user
-                // cardsUser = window[`user${game}`];
-                // cardsUser[2].forEach((card) => {
-                //     card.firstElementChild.classList.add("flipped");
-                //     card.firstElementChild.lastElementChild.classList.add("correct");
-                // });
-                // // ai
-                // cardsAI = window[`ai${game}`];
-                // cardsAI[2].forEach((card) => {
-                //     card.classList.add("correct");
-                // });
-                // //----- TEST (end)
                 break;
             default:
                 cards = window[`goal${game}`];
                 cards.forEach((card) => {
                     card.classList.add("correct");
                 });
-                // //----- TEST (start)
-                // // user
-                // cardsUser = window[`user${game}`];
-                // cardsUser.forEach((card) => {
-                //     card.firstElementChild.classList.add("flipped");
-                //     card.firstElementChild.lastElementChild.classList.add("correct");
-                // });
-                // // ai
-                // cardsAI = window[`ai${game}`];
-                // cardsAI.forEach((card) => {
-                //     card.classList.add("correct");
-                // });
-                // //----- TEST (end)
                 break;
         }
     }
@@ -242,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 checkForLingoBingo(Array.from(value[3]), player);
                 checkForLingoBingo(Array.from(value[4]), player);
                 break;
-            default: // game = Corners|Cross|Outside|Inside|Blackout
+            default: // game = all other games
                 checkForLingoBingo(Array.from(window[`${player}${game}`]), player);
                 break;
         }
@@ -274,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // game function: result = true so we have a winner!
+    // game function: result = true, so we have a winner!
     function isLingoBingo(player, cardsToCheck) {
         switch (player) {
             case "user":
@@ -362,9 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // game logic: start game
     function startGame() {
         wordSpan.innerHTML = "... LOADING GAME ...";
-        modals.forEach((modal) => {
-            modal.style.display = "none"; // close all modals
-        });
+        closeModals(); // close all modals
         // change btnAudio emoji if a muted-language and disable it
         if (mutedLangs.indexOf(selectedLanguage) >= 0) {
             btnAudio.innerHTML = "🔇";
@@ -394,42 +361,40 @@ document.addEventListener("DOMContentLoaded", () => {
         populateCards(userCards, "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         populateCards(aiCards, "#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
         activeGame = true; // game is now active
-        setTimeout(() => {
+        gameSetup = setTimeout(() => {
             // display specific game being played on goal-board
+            gameSpan.innerHTML = game;
             generateGoalGrid(game);
         }, 3500);
-        setTimeout(() => {
+        enableCards = setTimeout(() => {
             // chickenDinner(); // *TEST* only here to test localStorage variables quickly!
+            scoreSpan.innerHTML = 1000;
             btnLingoBingo.classList.remove("disabled"); // enable the LingoBingo button
             userTiles.forEach((card) => card.classList.remove("disabled")); // enable user cards
         }, 5000);
     }
 
 
-    btnSettings.addEventListener("click", () => resetGame());
-    btnScoreboard.addEventListener("click", () => resetGame());
     // reset game
     function resetGame() {
-        confetti.stop(); // stop confetti
-        activeGame = false;
-        userWon = false;
-        aiWon = false;
-        userCards = [];
-        aiCards = [];
-        answerList = [];
-        cardList = [];
-        clearInterval(cardInterval);
-        clearTimeout(markAI);
-        clearInterval(currentGame);
-        resetCards();
-        score = 1000;
-        scoreSpan.innerHTML = 1000;
-        toHide.forEach((item) => item.style.display = "unset");
-        wordSpan.innerHTML = "Click 'New Game'";
-        timerSpan.innerHTML = 5;
-        scoreDiv.classList.remove("correct", "incorrect");
-        btnLingoBingo.classList.add("disabled");
-        userTiles.forEach((card) => card.classList.add("disabled"));
+        setTimeout(() => {
+            confetti.stop(); // stop confetti
+            activeGame = userWon = aiWon = false;
+            userCards = aiCards = answerList = cardList = [];
+            clearInterval(cardInterval);
+            clearInterval(currentGame);
+            clearTimeout(markAI);
+            clearTimeout(gameSetup);
+            clearTimeout(enableCards);
+            resetCards();
+            score = 1000;
+            scoreSpan.innerHTML = timerSpan.innerHTML = gameSpan.innerHTML = "-";
+            wordSpan.innerHTML = "Click 'New Game'";
+            toHide.forEach((item) => item.style.display = "unset");
+            scoreDiv.classList.remove("correct", "incorrect");
+            btnLingoBingo.classList.add("disabled");
+            userTiles.forEach((card) => card.classList.add("disabled"));
+        }, 50);
     }
 
 
@@ -448,23 +413,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // user or ai won : winner-winner chicken-dinner!
     function chickenDinner() {
         // get existing localStorage values for specific game setup
-        let langGame = `${selectedLanguage}${game}`;
+        langGame = `${selectedLanguage}${game}`;
         // localStorage as Object: https://stackoverflow.com/a/2010948
-        let getGameLS = JSON.parse(localStorage.getItem(langGame));
-        let userWinCount, aiWinCount, highScore;
+        getGameLS = JSON.parse(localStorage.getItem(langGame));
         if (getGameLS) {
             userWinCount = getGameLS.userWon;
             aiWinCount = getGameLS.aiWon;
             highScore = getGameLS.highScore;
         } else {
-            // bit redundant, but single-line doesn't work (var1, var2, var3 = 0;)
-            userWinCount = 0;
-            aiWinCount = 0;
-            highScore = 0;
+            userWinCount = aiWinCount = highScore = 0;
         }
         // who won? User or AI
         if (userWon) {
-            // console.log("User Won"); // TEST
             userWinCount = ++userWinCount; // increment userWon count
             highScore = (score > highScore) ? score : highScore; // set to 'score' if higher than 'highScore'
             timerSpan.innerHTML = "You Win";
@@ -472,11 +432,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 scoreDiv.classList.add("correct");
             }, 500);
             confetti.start(5000);
+            // open scoreBoard and scroll to specific game
+            modalScoreboard.style.display = "block";
+            document.body.classList.add("disabled-overflow");
+            let thisGame = document.getElementById(langGame);
+            // https://stackoverflow.com/a/62043599
+            thisGame.scrollIntoView({behavior: "smooth", block: "center"});
+            thisGame.children[3].classList.add("chicken-dinner");
         } else if (aiWon) {
-            // console.log("AI won"); // TEST
             aiWinCount = ++aiWinCount; // increment aiWon count
-            timerSpan.innerHTML = "Game Over";
-            scoreSpan.innerHTML = "Game Over";
+            timerSpan.innerHTML = scoreSpan.innerHTML = "Game Over";
             setTimeout(() => {
                 scoreDiv.classList.add("incorrect");
             }, 500);
@@ -484,6 +449,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // set the new localStorage variables : must stringify localStorage Object
         let setGameLS = {"userWon": userWinCount, "aiWon": aiWinCount, "highScore": highScore};
         localStorage.setItem(langGame, JSON.stringify(setGameLS));
+        // update scoreBoard modal
+        let gameCells = document.getElementById(`${selectedLanguage}${game}`).getElementsByTagName("td");
+        gameCells[1].innerHTML = userWinCount;
+        gameCells[2].innerHTML = aiWinCount;
+        gameCells[3].innerHTML = highScore;
     }
 
 
@@ -683,8 +653,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // user click event
-    // NON-TEST! FIX: this should be in a function instead
+    // user click event on tiles
     userTiles.forEach((card) => {
         card.addEventListener("click", () => {
             if (activeGame) { // only if the game is active
@@ -732,31 +701,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // modalSettings
     btnSettings.addEventListener("click", () => {
-        modalSettings.style.display = "block";
+        openSettings();
     });
     btnNew.addEventListener("click", () => {
-        modalSettings.style.display = "block";
-        resetGame();
+        openSettings();
     });
+    function openSettings() {
+        modalSettings.style.display = "block";
+        document.body.classList.add("disabled-overflow");
+        resetGame();
+    }
     // modalScoreboard
     btnScoreboard.addEventListener("click", () => {
         modalScoreboard.style.display = "block";
+        document.body.classList.add("disabled-overflow");
+        resetGame();
     });
     // close modals
     modalClose.forEach((close) => {
         close.addEventListener("click", () => {
-            modals.forEach((modal) => {
-                modal.style.display = "none";
-            });
+            closeModals();
         });
     });
     window.addEventListener("click", (e) => {
         if (e.target == modalSettings || e.target == modalScoreboard) {
-            modals.forEach((modal) => {
-                modal.style.display = "none";
-            });
+            closeModals();
         }
     });
+    function closeModals() {
+        // close any open modal
+        modals.forEach((modal) => {
+            let hasClassCD = document.querySelectorAll(".chicken-dinner");
+            hasClassCD.forEach((item) => item.classList.remove("chicken-dinner"));
+            modal.style.display = "none";
+            document.body.classList.remove("disabled-overflow");
+        });
+    }
 
 
 });
