@@ -1,0 +1,61 @@
+@media only screen and (min-width: 600px) {
+
+    /* ROOT VARIABLES */
+    :root {--card: 10vw;}
+
+    /* BUTTONS */
+    button:not(#btn-start):not(.btn-play) {width: 100%;}
+
+    button:hover {
+        color: rgba(var(--green), 1);
+        background-color: rgba(var(--white), 1);
+        text-shadow: none;
+        border: 3px solid rgba(var(--green), 1);
+        box-shadow: 0 0 6px 0 rgba(var(--black), 0.5);
+    }
+    
+    button:active, button:focus {box-shadow: none;}
+
+    /* MAIN */
+    main {
+        width: 100%;
+        height: 100%;
+        padding: 1em 0;
+        grid-area: main;
+        display: grid;
+        gap: 0.25em;
+        grid-template-columns: 0.5em 1fr 0.5em 1fr 0.5em;
+        grid-template-areas:
+            ". user user user ."
+            ". word word word ."
+            ". stats . ai .";
+    }
+
+    /* GRID: USER BOARD */
+    #user-board .emoji-card .emoji-card-inner .emoji-card-back:hover {
+        cursor: pointer;
+        border-radius: var(--borderRadius);
+        box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
+    }
+
+    /* STATS */
+    #btn-new, #btn-lingobingo, #timer, #score, #flag {width: 100%;}
+
+    /* GAME SETUP */
+    #ai {
+        grid-template-areas:
+            "word"
+            "goal-board"
+            "ai-board";
+    }
+
+    /* MODALS */
+    .modal-container {
+        width: 80%;
+        height: 90%;
+        margin: 2.5% auto;
+    }
+
+    table td img.flag {width: 2em;}
+
+}

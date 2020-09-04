@@ -1,0 +1,9 @@
+@media only screen and (min-width: 1200px) {
+
+    /* ROOT VARIABLES */
+    :root {--card: calc(80vh / 6);}
+
+    /* GLOBAL SETTINGS */
+    body {font-size: 1.25em;}
+
+}

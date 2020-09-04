@@ -1,0 +1,16 @@
+@media only screen and (min-width: 992px) {
+
+    /* ROOT VARIABLES */
+    :root {--card: 8vw;}
+
+    /* GLOBAL SETTINGS */
+
+    /* MAIN */
+    main {
+        grid-template-columns: 1em 1fr 2em calc(var(--card) * 2) 2em 1fr 1em;
+        grid-template-areas:
+            ". user . stats . word ."
+            ". user . stats . ai .";
+    }
+
+}
