@@ -4,20 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='icon' sizes="192x192" id="favicon" href="assets/svg/gb.svg" type="image/x-icon">
-    <link rel="stylesheet" href="assets/css/mobile.css" type="text/css">
-    <link rel="stylesheet" href="assets/css/tablet.css" type="text/css">
-    <link rel="stylesheet" href="assets/css/desktop.css" type="text/css">
-    <link rel="stylesheet" href="assets/css/desktop-large.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/style-sm.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/style-md.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/style-lg.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/style-xl.css" type="text/css">
     <title>Lingo Bingo</title>
 </head>
 <body>
 
+    <nav>
+        <!-- modal: game settings -->
+        <span id="btn-settings" class="emoji" role="img" aria-label="gear">&#x2699;</span>
 
-    <header>
-        <!-- language flag -->
-        <img src="assets/svg/gb.svg" alt="gb flag" id="logo-flag" class="flag">
-        <h1 id="logo">Lingo Bingo</h1>
-    </header>
+        <!-- audio level -->
+        <span id="btn-audio" class="emoji" role="img" aria-label="speaker high volume">&#x1F50A;</span>
+
+        <!-- modal: game information -->
+        <span id="btn-info" class="emoji" role="img" aria-label="red question mark">&#x2753;</span>
+
+        <!-- modal: leader board -->
+        <span id="btn-scoreboard" class="emoji" role="img" aria-label="trophy">&#x1F3C6;</span>
+    </nav>
 
 
     <main>
@@ -60,16 +67,16 @@
             <!-- button: lingo bingo -->
             <button id="btn-lingobingo" class="button disabled"><span class="bold">LINGO BINGO</span></button>
             <!-- timer -->
-            <div id="timer"><p><small>TIMER</small><br><span id="timer-span" class="bold">5</span></p></div>
+            <div id="timer"><p><small>TIMER</small><br><span id="timer-span" class="bold">-</span></p></div>
             <!-- score -->
-            <div id="score"><p><small>SCORE</small><br><span id="score-span" class="bold">1000</span></p></div>
-            <!-- username -->
-            <div id="username"><span id="username-span" contenteditable="true" spellcheck="false" class="bold">USERNAME</span></p></div>
+            <div id="score"><p><small>SCORE</small><br><span id="score-span" class="bold">-</span></p></div>
+            <!-- language flag -->
+            <div id="flag"><p><img src="assets/svg/gb.svg" alt="gb flag" class="flag"><br class="ignore"><span id="game-span" class="bold">-</span></p></div>
         </section>
 
 
         <!-- current word -->
-        <div id="word"><p id="word-span" class="bold">Click 'New Game'</p></div>
+        <aside id="word"><p id="word-span" class="bold">Click 'New Game'</p></aside>
 
 
         <section id="ai">
@@ -136,7 +143,7 @@
 
 
     <!-- modal: game settings -->
-    <div id="modal-settings" class="modal">
+    <aside id="modal-settings" class="modal">
         <div class="modal-container">
             <div class="modal-header">SETTINGS</div>
             <div class="modal-body">
@@ -171,11 +178,11 @@
             </div>
             <div class="modal-close">CLOSE</div>
         </div>
-    </div>
+    </aside>
 
 
     <!-- modal: scoreboard -->
-    <div id="modal-scoreboard" class="modal">
+    <aside id="modal-scoreboard" class="modal">
         <div class="modal-container">
             <div class="modal-header">SCORE BOARD</div>
             <div class="modal-body">
@@ -185,43 +192,18 @@
                             <th>Game</th>
                             <th>Won</th>
                             <th>Lost</th>
-                            <th>Score</th>
+                            <th>Best</th>
                             <th>Play</th>
                         </tr>
                     </thead>
                     <tbody id="tbody">
-                        <!-- generates row for each language/game with localStorage -->
-                        <!-- example -->
-                        <!-- <tr>
-                            <td><img src="assets/svg/gb.svg" alt="gb flag" class="flag"><br>Corners</td>
-                            <td>2</td>
-                            <td>1</td>
-                            <td>7500</td>
-                            <td><button id="btn-start">Play</button></td>
-                        </tr> -->
+                        <!-- inserts row for each language/game using localStorage -->
                     </tbody>
                 </table>
             </div>
             <div class="modal-close">CLOSE</div>
         </div>
-    </div>
-
-
-    <footer>
-        <nav>
-            <!-- modal: game settings -->
-            <span id="btn-settings" class="emoji" role="img" aria-label="gear">&#x2699;</span>
-
-            <!-- audio level -->
-            <span id="btn-audio" class="emoji" role="img" aria-label="speaker high volume">&#x1F50A;</span>
-
-            <!-- modal: game information -->
-            <span id="btn-info" class="emoji" role="img" aria-label="red question mark">&#x2753;</span>
-
-            <!-- modal: leader board -->
-            <span id="btn-scoreboard" class="emoji" role="img" aria-label="trophy">&#x1F3C6;</span>
-        </nav>
-    </footer>
+    </aside>
 
 
     <script src="assets/data/library.js"></script>
