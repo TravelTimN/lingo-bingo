@@ -13,4 +13,9 @@
             ". user . stats . ai .";
     }
 
+    /* MODALS */
+    #modal-settings table {
+        border-spacing: 0 1em;
+    }
+
 }
