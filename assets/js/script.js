@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const rows = ["1", "2", "3", "4", "5"];
     const players = ["user", "ai", "goal"];
     const games = ["Blackout", "Columns", "Corners", "Cross", "Inside", "Outside", "Rows"];
-    const languages = ["cn", "nl", "gb", "fr", "de", "in", "ie", "it", "jp", "kr", "pl", "pt", "ru", "mx"];
+    const languages = ["gb", "nl", "fr", "de", "in", "ie", "it", "jp", "kr", "cn", "pl", "pt", "ru", "es"];
 
     // dynamic variables
     let userWon, aiWon, activeGame, pointsDeducted = false;
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // speech syntheses
     let msg, msgVoice, msgLang, voices;
     let speechAvailable = false;
-    const mutedLangs = ["ie"]; // languages to mute by default
+    const mutedLangs = ["ie", "arb", "gr", "is", "no", "ro", "se", "tr", "vn"]; // languages to mute by default
 
 
     userTiles.forEach((card) => card.classList.add("disabled")); // disable user cards on load
@@ -578,7 +578,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     msgVoice = voices[4];
                     msgLang = "en-GB";
                     break;
-                case "mx":
+                case "es":
                     msgVoice = voices[7];
                     msgLang = "es-US";
                     break;
