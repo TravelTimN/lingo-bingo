@@ -160,7 +160,7 @@ main {
 }
 
 /* BOARD GAMES */
-.emoji-card {
+.card {
     background-color: transparent;
     perspective: 1000px;
     width: 100%;
@@ -187,7 +187,7 @@ main {
     justify-content: center;
 }
 
-#user-board .emoji-card-front {
+#user-board .front {
     font-size: 3em;
     font-weight: bold;
     color: rgba(var(--white), 1);
@@ -206,7 +206,7 @@ main {
             rgba(var(--blueL4), 1) 0.5em);
 }
 
-#user-board .emoji-card-inner {
+#user-board .inner {
     position: relative;
     width: var(--card);
     height: var(--card);
@@ -214,19 +214,19 @@ main {
     transform-style: preserve-3d;
 }
 
-#user-board .emoji-card .emoji-card-inner.flipped {
+#user-board .card .inner.flipped {
     transform: rotateY(180deg);
 }
 
-#user-board .emoji-card-front,
-#user-board .emoji-card-back {
+#user-board .front,
+#user-board .back {
     position: absolute;
     width: var(--card);
     height: var(--card);
     backface-visibility: hidden;
 }
 
-#user-board .emoji-card-back {
+#user-board .back {
     display: grid;
     align-items: center;
     transform: rotateY(180deg);
@@ -235,12 +235,12 @@ main {
     box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
 }
 
-#user-board .emoji-card-back .emoji {
+#user-board .back .emoji {
     font-size: 3em;
 }
 
 /* user has correct card */
-#user-board .emoji-card .emoji-card-inner .emoji-card-back.correct {
+#user-board .card .inner .back.correct {
     background-color: rgba(var(--green), 1);
     border-radius: var(--borderRadius);
     cursor: default;
@@ -248,21 +248,21 @@ main {
 }
 
 /* user has incorrect card | wiggle effect : https://stackoverflow.com/a/15991184 */
-#user-board .emoji-card .emoji-card-inner .emoji-card-back.incorrect {
+#user-board .card .inner .back.incorrect {
     border-radius: var(--borderRadius);
     background-color: rgba(var(--red), 1);
     animation: wiggleCard 0.5s linear;
 }
 
 /* user has incorrect LingoBingo */
-#user-board.incorrect .emoji-card {
+#user-board.incorrect .card {
     border-radius: var(--borderRadius);
     box-shadow: 0 0 4px 4px rgba(var(--red), 1);
     animation: wiggleBoard 0.5s linear;
 }
 
 /* user won - pulse winning cards */
-#user-board .emoji-card .emoji-card-inner .emoji-card-back.correct.winning-tiles,
+#user-board .card .inner .back.correct.winning-tiles,
 .chicken-dinner {
     animation: pulseUser 2s ease-out infinite;
 }
@@ -353,7 +353,7 @@ main {
     gap: 0.25em;
 }
 
-#goal-board .emoji-card {
+#goal-board .card {
     height: calc(var(--card) / 4);
     width: calc(var(--card) / 4);
     border-radius: calc(var(--borderRadius) / 2);
@@ -361,7 +361,7 @@ main {
     background-color: rgba(var(--green), 0.25);
 }
 
-#goal-board .emoji-card.correct {
+#goal-board .card.correct {
     background-color: rgba(var(--green), 1);
     animation: fadeIn 2s ease-out;
 }
@@ -374,7 +374,7 @@ main {
     gap: 0.5em;
 }
 
-#ai-board .emoji-card {
+#ai-board .card {
     height: calc(var(--card) / 2);
     width: calc(var(--card) / 2);
     border-radius: calc(var(--borderRadius) / 2);
@@ -386,7 +386,7 @@ main {
             rgba(var(--grey), 1) 1em);
 }
 
-#ai-board .emoji-card.correct {
+#ai-board .card.correct {
     background: repeating-linear-gradient(45deg,
             rgba(var(--green), 1),
             rgba(var(--green), 1) 0.5em,
@@ -395,7 +395,7 @@ main {
 }
 
 /* ai won - blink winning cards */
-#ai-board .emoji-card.correct.winning-tiles {
+#ai-board .card.correct.winning-tiles {
     animation: blinkAI 2s ease-out infinite;
 }
 

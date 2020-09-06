@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // constant variables
     const userBoard = document.getElementById("user-board");
-    const userTiles = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back");
+    const userTiles = document.querySelectorAll("#user-board .card .inner .back");
     const btnNew = document.getElementById("btn-new");
     const btnLingoBingo = document.getElementById("btn-lingobingo");
     const btnStart = document.getElementById("btn-start");
@@ -165,15 +165,15 @@ document.addEventListener("DOMContentLoaded", () => {
             case "Rows": // any horizontal row
                 return document.querySelectorAll(`#${player}-board li[id$='${val}']`);
             case "Corners": // ignore the 'N' Column and the '3' Row
-                return document.querySelectorAll(`#${player}-board li:not([id^='${val}n']):not([id$='3']).emoji-card`);
+                return document.querySelectorAll(`#${player}-board li:not([id^='${val}n']):not([id$='3']).card`);
             case "Cross": // only the 'N' Column and the '3' Row
-                return document.querySelectorAll(`#${player}-board li[id^='${val}n'].emoji-card, #${player}-board li[id$='3'].emoji-card`);
+                return document.querySelectorAll(`#${player}-board li[id^='${val}n'].card, #${player}-board li[id$='3'].card`);
             case "Outside": // only cards starting with 'Bs', 'Os', or ending with '1s', '5s'
-                return document.querySelectorAll(`#${player}-board li[id^='${val}b'],[id^='${val}o'].emoji-card, #${player}-board li[id$='1'].emoji-card, #${player}-board li[id$='5'].emoji-card`);
+                return document.querySelectorAll(`#${player}-board li[id^='${val}b'],[id^='${val}o'].card, #${player}-board li[id$='1'].card, #${player}-board li[id$='5'].card`);
             case "Inside": // only cards that do NOT start with 'Bs', 'Os', or end with '1s', '5s'
-                return document.querySelectorAll(`#${player}-board li:not([id^='${val}b']):not([id^='${val}o']):not([id$='1']):not([id$='5']).emoji-card`);
+                return document.querySelectorAll(`#${player}-board li:not([id^='${val}b']):not([id^='${val}o']):not([id$='1']):not([id$='5']).card`);
             case "Blackout": // entire board must be completed
-                return document.querySelectorAll(`#${player}-board li.emoji-card`);
+                return document.querySelectorAll(`#${player}-board li.card`);
         }
     }
 
@@ -347,19 +347,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // instead of obtaining all languages from the library, only get selectedLanguage
         // https://stackoverflow.com/a/54907643
         let keys = ["word", "emoji", "aria", selectedLanguage]; // only get these keys from [allCards]
-        let allCardsSelectedLanguage = allCards.map(elem => {
+        let allCardsSelectedLanguage = allCards.map((val) => {
             let obj = {};
-            keys.forEach(key => obj[key] = elem[key]);
+            keys.forEach((key) => obj[key] = val[key]);
             return obj;
         });
         // generate emoji list for the current game, user, and AI
         cardList = getRandomCards(allCardsSelectedLanguage, 60); // only get 60 random cards (max. 5min game)
-        // cardList = getRandomCards(allCards, allCards.length); // entire length of [allCards] *original TEST*
         userCards = getRandomCards(cardList, 25); // assign 25 random cards to User from [cardList]
         aiCards = getRandomCards(cardList, 25); // assign 25 random cards to AI from [cardList]
         // populate the User & AI boards
-        populateCards(userCards, "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
-        populateCards(aiCards, "#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji");
+        populateCards(userCards, "#user-board .card .inner .back .emoji");
+        populateCards(aiCards, "#ai-board .card .inner .back .emoji");
         activeGame = true; // game is now active
         gameSetup = setTimeout(() => {
             // display specific game being played on goal-board
@@ -459,7 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // reset all cards (user, ai, goal)
     function resetCards() {
-        cardsToReset = document.querySelectorAll("#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji, #ai-board .emoji-card, #goal-board .emoji-card");
+        cardsToReset = document.querySelectorAll("#user-board .card .inner .back .emoji, #ai-board .card, #goal-board .card");
         cardsToReset.forEach((card) => {
             card.parentNode.parentNode.classList.remove("flipped"); // un-flip user cards
             card.parentNode.classList.remove("correct", "winning-tiles"); // user cards
@@ -489,9 +488,10 @@ document.addEventListener("DOMContentLoaded", () => {
         let i = 0;
         cards.forEach((card) => {
             // use emoji in HTML: https://www.kirupa.com/html5/emoji.htm
-            if (grid === "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
+            if (grid === "#user-board .card .inner .back .emoji") {
                 card.innerText = String.fromCodePoint(array[i].emoji.replace("U+", "0x"));
             }
+            card.setAttribute("role", "img");
             card.setAttribute("aria-label", array[i].aria);
             card.setAttribute("data-emoji", array[i].word);
             i++;
@@ -507,7 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let cardIndex = 0;
         cardInterval = setInterval(() => {
             if (cardIndex != cards.length && activeGame) {
-                if (grid === "#user-board .emoji-card .emoji-card-inner .emoji-card-back .emoji") {
+                if (grid === "#user-board .card .inner .back .emoji") {
                     cards[cardIndex++].parentNode.parentNode.classList.add("flipped");
                 }
             } else {
@@ -542,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function autocompleteAiGrid(word) {
         if (aiCards.includes(word)) {
             // https://stackoverflow.com/a/13449757
-            let aiCard = document.querySelector(`#ai-board .emoji-card .emoji-card-inner .emoji-card-back .emoji[data-emoji~="${word.word}"]`);
+            let aiCard = document.querySelector(`#ai-board .card .inner .back .emoji[data-emoji~="${word.word}"]`);
             // give a delay to allow user to guess first in case of tie
             markAI = setTimeout(() => {
                 if (activeGame) aiCard.parentNode.parentNode.parentNode.classList.add("correct");
@@ -633,7 +633,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // toggle mute emoji
     btnAudio.addEventListener("click", () => {
-        btnAudio.innerHTML = (btnAudio.innerHTML == "🔊") ? "&#x1F507;" : "&#x1F50A;";
+        btnAudio.innerHTML = (btnAudio.innerHTML == "🔊") ? "🔇" : "🔊";
     });
 
 

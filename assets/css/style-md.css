@@ -32,7 +32,7 @@
     }
 
     /* GRID: USER BOARD */
-    #user-board .emoji-card .emoji-card-inner .emoji-card-back:hover {
+    #user-board .card .inner .back:hover {
         cursor: pointer;
         border-radius: var(--borderRadius);
         box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
