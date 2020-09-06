@@ -1,3 +1,50 @@
+/* tooltips only from +500px / all others found below +600px */
+@media only screen and (min-width: 500px) {
+
+    /* TOOLTIPS */
+    nav .emoji {position: relative;}
+
+    nav .emoji .tooltip {
+        display: unset;
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        z-index: 1;
+        width: 20vw;
+        margin-left: -10vw; /* 50% width */
+        padding: 0.25em;
+        top: 115%;
+        left: 50%;
+        line-height: 1.5;
+        font-size: 0.5em;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-align: center;
+        color: rgba(var(--white), 1);
+        background-color: rgba(var(--blueD4), 1);
+        text-shadow: 2px 2px 2px rgba(var(--black), 1);
+        border: 2px solid rgba(var(--blue), 1);
+        box-shadow: 2px 2px 0.25em rgba(var(--black), 1);
+        border-radius: var(--borderRadius);
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    nav .emoji .tooltip::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -0.5em;
+        border: 0.5em solid;
+        border-color: transparent transparent rgba(var(--blueD4), 1) transparent;
+    }
+
+    nav .emoji:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
 @media only screen and (min-width: 600px) {
 
     /* ROOT VARIABLES */

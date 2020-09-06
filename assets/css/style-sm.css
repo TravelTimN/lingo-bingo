@@ -142,6 +142,9 @@ nav .emoji {
     font-size: 2.5em;
 }
 
+/* TOOLTIPS */
+nav .emoji .tooltip {display: none;}
+
 /* MAIN */
 main {
     width: 100%;
@@ -401,6 +404,7 @@ main {
 
 /* MODALS */ /* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_modal2 */
 .modal {
+    cursor: pointer;
     display: none;
     position: fixed;
     z-index: 10;
@@ -413,6 +417,7 @@ main {
 }
 
 .modal-container {
+    cursor: default;
     position: relative;
     border-radius: var(--borderRadius);
     background-color: rgba(var(--blue), 1);
@@ -438,6 +443,8 @@ main {
 }
 
 .modal-body {
+    overflow-y: scroll;
+    transform: scaleX(-1);
     margin: 0 0.5em;
     height: 80%;
     border-radius: var(--borderRadius);
@@ -465,18 +472,19 @@ main {
     background-color: rgba(var(--blueD4), 1);
 }
 
+.modal-body table {
+    transform: scaleX(-1);
+    border-collapse: separate;
+}
+
 /* MODAL: SETTINGS */
 #modal-settings .modal-body {
-    overflow-y: scroll;
-    transform: scaleX(-1);
     align-content: center;
     padding: 1em;
     text-align: center;
 }
 
 #modal-settings table {
-    transform: scaleX(-1);
-    border-collapse: separate;
     border-spacing: 0 2em;
 }
 
@@ -522,13 +530,11 @@ main {
 
 /* MODAL: SCORE BOARD */
 #modal-scoreboard .modal-body {
-    overflow-y: scroll;
-    transform: scaleX(-1);
+    cursor: pointer;
 }
 
 #modal-scoreboard table {
-    transform: scaleX(-1);
-    border-collapse: separate;
+    cursor: default;
     width: 100%;
     border-spacing: 0 8px;
 }
@@ -592,9 +598,7 @@ main {
     background-color: rgba(var(--blueL4), 1);
 }
 
-.modal-body::-webkit-scrollbar {
-    width: 10px;
-}
+.modal-body::-webkit-scrollbar {width: 10px;}
 
 .modal-body::-webkit-scrollbar-thumb {
     background-color: rgba(var(--blueD4), 1);
