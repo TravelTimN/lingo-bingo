@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameList = document.getElementById("game-list");
     const flags = document.querySelectorAll(".flag");
     const timerSpan = document.getElementById("timer-span");
+    const timerDiv = document.getElementById("timer");
     const scoreSpan = document.getElementById("score-span");
     const scoreDiv = document.getElementById("score");
     const gameSpan = document.getElementById("game-span");
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // dynamic variables
     let userWon, aiWon, activeGame, pointsDeducted = false;
     let answerList = [];
-    let score = 1000;
+    let score = 2500;
     let userCards, aiCards, selectedLanguage, game, langGame, getGameLS,
         userWinCount, aiWinCount, highScore, gameSetup, enableCards,
         currentGame, cardInterval, cardList, markAI, result, resultList;
@@ -100,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 td2.appendChild(losesEl);
                 // cell: user high score
                 let td3 = tr.insertCell(3);
-                let scoreEl = document.createTextNode(highScore);
+                let scoreEl = document.createTextNode(numberWithCommas(highScore));
                 td3.appendChild(scoreEl);
                 // cell: play button (for specific game)
                 let td4 = tr.insertCell(4);
@@ -119,6 +120,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 td4.appendChild(buttonEl);
             });
         });
+    }
+
+
+    // helper: add comma to thousands // https://stackoverflow.com/a/2901298
+    function numberWithCommas(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
 
@@ -247,18 +254,14 @@ document.addEventListener("DOMContentLoaded", () => {
             case "user":
                 userWon = true; // User has won! trigger winning function!
                 aiWon = false;
-                cardsToCheck.forEach((card) => {
-                    // add pulsing effect to the tiles that won
-                    card.firstElementChild.lastElementChild.classList.add("winning-tiles");
-                });
+                // add pulsing effect to the tiles that won
+                cardsToCheck.forEach((card) => card.firstElementChild.lastElementChild.classList.add("winning-tiles"));
                 break;
             case "ai":
                 aiWon = true; // AI has won! trigger losing function
                 userWon = false;
-                cardsToCheck.forEach((card) => {
-                    // add blinking effect to the tiles that won
-                    card.classList.add("winning-tiles");
-                });
+                // add blinking effect to the tiles that won
+                cardsToCheck.forEach((card) => card.classList.add("winning-tiles"));
                 break;
         }
         stopGame(); // we have a winner! stop the game
@@ -273,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (half < 50) half = 0;
             let roundedUp = Math.round(half / 50) * 50; // round to nearest 50pts
             let deduction = score - roundedUp;
-            scoreSpan.innerHTML = `- ${deduction} pts`;
+            scoreSpan.innerHTML = `- ${deduction}`;
             score = roundedUp;
             scoreDiv.classList.add("incorrect"); // add red bgColor
             userBoard.classList.add("incorrect"); // wiggle the userBoard
@@ -285,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(() => {
                     scoreDiv.classList.remove("incorrect"); // remove red bgColor
                     btnLingoBingo.classList.remove("disabled"); // re-enable LingoBingo button
-                    scoreSpan.innerHTML = score;
+                    scoreSpan.innerHTML = numberWithCommas(score);
                 }, 1000);
             }
             setTimeout(() => {
@@ -364,8 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
             generateGoalGrid(game);
         }, 3500);
         enableCards = setTimeout(() => {
-            // chickenDinner(); // *TEST* only here to test localStorage variables quickly!
-            scoreSpan.innerHTML = 1000;
+            scoreSpan.innerHTML = numberWithCommas(2500);
             btnLingoBingo.classList.remove("disabled"); // enable the LingoBingo button
             userTiles.forEach((card) => card.classList.remove("disabled")); // enable user cards
         }, 5000);
@@ -384,10 +386,11 @@ document.addEventListener("DOMContentLoaded", () => {
             clearTimeout(gameSetup);
             clearTimeout(enableCards);
             resetCards();
-            score = 1000;
+            score = 2500;
             scoreSpan.innerHTML = timerSpan.innerHTML = gameSpan.innerHTML = "-";
             wordSpan.innerHTML = "Click 'New Game'";
             toHide.forEach((item) => item.style.display = "unset");
+            timerDiv.classList.remove("correct", "incorrect");
             scoreDiv.classList.remove("correct", "incorrect");
             btnLingoBingo.classList.add("disabled");
             userTiles.forEach((card) => card.classList.add("disabled"));
@@ -426,6 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
             highScore = (score > highScore) ? score : highScore; // set to 'score' if higher than 'highScore'
             timerSpan.innerHTML = "You Win";
             setTimeout(() => {
+                timerDiv.classList.add("correct");
                 scoreDiv.classList.add("correct");
             }, 500);
             confetti.start(5000);
@@ -440,6 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
             aiWinCount = ++aiWinCount; // increment aiWon count
             timerSpan.innerHTML = scoreSpan.innerHTML = "Game Over";
             setTimeout(() => {
+                timerDiv.classList.add("incorrect");
                 scoreDiv.classList.add("incorrect");
             }, 500);
         }
@@ -447,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let setGameLS = {"userWon": userWinCount, "aiWon": aiWinCount, "highScore": highScore};
         localStorage.setItem(langGame, JSON.stringify(setGameLS));
         // update scoreBoard modal
-        let gameCells = document.getElementById(`${selectedLanguage}${game}`).getElementsByTagName("td");
+        let gameCells = document.getElementById(langGame).getElementsByTagName("td");
         gameCells[1].innerHTML = userWinCount;
         gameCells[2].innerHTML = aiWinCount;
         gameCells[3].innerHTML = highScore;
@@ -658,12 +663,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 // https://stackoverflow.com/a/8217584
                 // check if clicked card exists inside of the answerList[]
                 if (answerList.some(word => word.word === card.firstElementChild.dataset.emoji)) {
-                    score += 250; // add 250pts (correct)
-                    scoreSpan.innerHTML = "+ 250 pts";
+                    score += 300; // add 300pts (correct)
+                    scoreSpan.innerHTML = "+ 300";
                     userCheck("correct", card);
                 } else {
-                    score -= 250; // deduct 250pts (incorrect)
-                    scoreSpan.innerHTML = "- 250 pts";
+                    score -= 300; // deduct 300pts (incorrect)
+                    scoreSpan.innerHTML = "- 300";
                     userCheck("incorrect", card);
                 }
             }
@@ -679,7 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // remove temporary color
             scoreDiv.classList.remove(answer);
             if (answer == "incorrect") card.classList.remove(answer);
-            scoreSpan.innerHTML = score;
+            scoreSpan.innerHTML = numberWithCommas(score);
             // user lost all points, so the AI automatically wins - stopGame()
             if (score <= 0) {
                 aiWon = true;
