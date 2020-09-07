@@ -25,11 +25,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalScoreboard = document.getElementById("modal-scoreboard");
     const modalClose = document.querySelectorAll(".modal-close");
     const toHide = document.querySelectorAll("small, br:not(.ignore)");
+    const players = ["user", "ai", "goal"];
+    
     const columns = ["b", "i", "n", "g", "o"];
     const rows = ["1", "2", "3", "4", "5"];
-    const players = ["user", "ai", "goal"];
-    const games = ["Blackout", "Columns", "Corners", "Cross", "Inside", "Outside", "Rows"];
-    const languages = ["gb", "nl", "fr", "de", "in", "ie", "it", "jp", "kr", "cn", "pl", "pt", "ru", "es"];
+    const games = ["Blackout", "Bullseye", "Corners", "Cross", "Diamond", "Heart", "Inside", "Outside", "Smiley", "X"];
+    // const games = ["Blackout", "Bullseye", "Columns", "Corners", "Cross", "Diagonals", "Diamond", "Heart", "Inside", "Outside", "Rows", "Smiley", "X"];
+    const arrBlackout = ["b1", "b2", "b3", "b4", "b5", "i1", "i2", "i3", "i4", "i5", "n1", "n2", "n3", "n4", "n5", "g1", "g2", "g3", "g4", "g5", "o1", "o2", "o3", "o4", "o5"];
+    const arrBullseye = ["b1", "b2", "b3", "b4", "b5", "i1", "i5", "n1", "n3", "n5", "g1", "g5", "o1", "o2", "o3", "o4", "o5"];
+    const arrCorners = ["b1", "b2", "b4", "b5", "i1", "i2", "i4", "i5", "g1", "g2", "g4", "g5", "o1", "o2", "o4", "o5"];
+    const arrCross = ["b3", "i3", "n1", "n2", "n3", "n4", "n5", "g3", "o3"];
+    const arrDiamond = ["b3", "i2", "i4", "n1", "n5", "g2", "g4", "o3"];
+    const arrHeart = ["b2", "b3", "i1", "i4", "n2", "n5", "g1", "g4", "o2", "o3"];
+    const arrInside = ["i2", "i3", "i4", "n2", "n3", "n4", "g2", "g3", "g4"];
+    const arrOutside = ["b1", "b2", "b3", "b4", "b5", "i1", "i5", "n1", "n5", "g1", "g5", "o1", "o2", "o3", "o4", "o5"];
+    const arrSmiley = ["b4", "i1", "i2", "i5", "n5", "g1", "g2", "g5", "o4"];
+    const arrX = ["b1", "b5", "i2", "i4", "n3", "g2", "g4", "o1", "o5"];
 
     // dynamic variables
     let userWon, aiWon, activeGame, pointsDeducted = false;
@@ -42,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // speech syntheses
     let msg, msgVoice, msgLang, voices;
     let speechAvailable = false;
+    const languages = ["gb", "nl", "fr", "de", "in", "ie", "it", "jp", "kr", "cn", "pl", "pt", "ru", "es"];
     const mutedLangs = ["ie", "arb", "gr", "is", "no", "ro", "se", "tr", "vn"]; // languages to mute by default
 
 
@@ -61,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     aiWinCount = getGameLS.aiWon;
                     highScore = getGameLS.highScore;
                 } else {
-                    userWinCount = aiWinCount = highScore = 0;
+                    userWinCount = aiWinCount = highScore = "-";
                 }
                 // tbody: generate rows
                 let tbody = document.getElementById("tbody");
@@ -96,11 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 let buttonEl = document.createElement("button");
                 buttonEl.innerHTML = "Play";
                 buttonEl.classList.add("btn-play");
-                buttonEl.addEventListener("click", function() {
-                    languageList.value = btnLang; // update languageList selected value
-                    selectedLanguage = btnLang; // update selectedLanguage global variable
-                    gameList.value = btnGame; // update gameList selected value
-                    game = btnGame; // update game global variable
+                buttonEl.addEventListener("click", () => {
+                    languageList.value = selectedLanguage = btnLang; // update languageList + selectedLanguage
+                    gameList.value = game = btnGame; // update gameList + game
                     flags.forEach((flag) => {
                         languageSelection(flag); // update all .flags (not score board)
                     });
@@ -117,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function generateGameSettings(game) {
         players.forEach((player) => {
             window[`${player}${game}`] = []; // needs generated first for each
-            // generate all 'User' and 'AI' variables
+            // generate all 'User', 'Goal', and 'AI' variables
             switch (game) {
                 case "Columns": // must be repeated 5x (for each column)
                     columns.forEach((col) => {
@@ -129,8 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         window[`${player}${game}`].push(getGameCards(player, game, row));
                     });
                     break;
-                default: // all other 'games' (not cols/rows)
-                    window[`${player}${game}`] = getGameCards(player, game, `${player}-`);
+                case "Diagonals": // must be repeated 2x (for each ltr or rtl)
+                    // TBD
+                    break;
+                default: // all other 'games' (not cols/rows/diagonals)
+                    window[`${player}${game}`] = getGameCards(player, game, eval(`arr${game}`));
                     break;
             }
         });
@@ -158,22 +171,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // helper function: generate gameCards required to win
-    function getGameCards(player, game, val) {
+    function getGameCards(player, game, arr) {
         switch (game) {
             case "Columns": // any vertical column
-                return document.querySelectorAll(`#${player}-board li[id^=${val}]`);
+                return document.querySelectorAll(`#${player}-board li[id^=${arr}]`);
             case "Rows": // any horizontal row
-                return document.querySelectorAll(`#${player}-board li[id$='${val}']`);
-            case "Corners": // ignore the 'N' Column and the '3' Row
-                return document.querySelectorAll(`#${player}-board li:not([id^='${val}n']):not([id$='3']).card`);
-            case "Cross": // only the 'N' Column and the '3' Row
-                return document.querySelectorAll(`#${player}-board li[id^='${val}n'].card, #${player}-board li[id$='3'].card`);
-            case "Outside": // only cards starting with 'Bs', 'Os', or ending with '1s', '5s'
-                return document.querySelectorAll(`#${player}-board li[id^='${val}b'],[id^='${val}o'].card, #${player}-board li[id$='1'].card, #${player}-board li[id$='5'].card`);
-            case "Inside": // only cards that do NOT start with 'Bs', 'Os', or end with '1s', '5s'
-                return document.querySelectorAll(`#${player}-board li:not([id^='${val}b']):not([id^='${val}o']):not([id$='1']):not([id$='5']).card`);
-            case "Blackout": // entire board must be completed
-                return document.querySelectorAll(`#${player}-board li.card`);
+                return document.querySelectorAll(`#${player}-board li[id$='${arr}']`);
+            // case "Diagonals": // either diagonal direction
+                // return document.querySelectorAll(`#${player}-board li[id^=${arr}]`);
+            default:
+                let gameArr = [];
+                arr.forEach((tile) => gameArr.push(`#${player}-board li[id^='${player}-${tile}'].card`));
+                return document.querySelectorAll(gameArr);
         }
     }
 
