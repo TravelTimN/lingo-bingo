@@ -310,10 +310,12 @@ main {
     box-shadow: 0 0 6px rgba(var(--blueD4), 1);
 }
 
-/* STATS: SCORE */
-#score.correct, #score.incorrect {color: rgba(var(--white), 1); text-shadow: 2px 2px 2px rgba(var(--black), 0.5);}
-#score.correct {background-color: rgba(var(--green), 1);}
-#score.incorrect {background-color: rgba(var(--red), 1); box-shadow: 0 0 6px rgba(var(--red), 1);}
+/* STATS: SCORE & TIMER */
+#score.correct, #score.incorrect, #timer.correct, #timer.incorrect {
+    color: rgba(var(--white), 1); text-shadow: 2px 2px 2px rgba(var(--black), 0.5);
+}
+#score.correct, #timer.correct {background-color: rgba(var(--green), 1);}
+#score.incorrect, #timer.incorrect {background-color: rgba(var(--red), 1); box-shadow: 0 0 6px rgba(var(--red), 1);}
 
 /* GAME SETUP */
 #ai {
