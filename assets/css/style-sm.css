@@ -519,6 +519,11 @@ main {
     background-color: rgba(var(--blue), 0.75);
 }
 
+#modal-settings select option:disabled {
+    color: rgba(var(--blue), 0.5);
+    background-color: rgba(var(--blueD4), 1);
+}
+
 #modal-settings span.emoji {
     font-size: 2em;
     vertical-align: unset;
