@@ -26,19 +26,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalClose = document.querySelectorAll(".modal-close");
     const toHide = document.querySelectorAll("small, br:not(.ignore)");
     const players = ["user", "ai", "goal"];
-    
-    const columns = ["b", "i", "n", "g", "o"];
-    const rows = ["1", "2", "3", "4", "5"];
-    const games = ["Blackout", "Bullseye", "Corners", "Cross", "Diamond", "Heart", "Inside", "Outside", "Smiley", "X"];
-    // const games = ["Blackout", "Bullseye", "Columns", "Corners", "Cross", "Diagonals", "Diamond", "Heart", "Inside", "Outside", "Rows", "Smiley", "X"];
+
+    const games = ["Blackout", "Bullseye", "Columns", "Corners", "Cross", "Diagonals", "Diamond", "Heart", "Inside", "Outside", "Rows", "Smiley", "X"];
     const arrBlackout = ["b1", "b2", "b3", "b4", "b5", "i1", "i2", "i3", "i4", "i5", "n1", "n2", "n3", "n4", "n5", "g1", "g2", "g3", "g4", "g5", "o1", "o2", "o3", "o4", "o5"];
     const arrBullseye = ["b1", "b2", "b3", "b4", "b5", "i1", "i5", "n1", "n3", "n5", "g1", "g5", "o1", "o2", "o3", "o4", "o5"];
+    const arrColumns = [["b1", "b2", "b3", "b4", "b5"], ["i1", "i2", "i3", "i4", "i5"], ["n1", "n2", "n3", "n4", "n5"], ["g1", "g2", "g3", "g4", "g5"], ["o1", "o2", "o3", "o4", "o5"]];
     const arrCorners = ["b1", "b2", "b4", "b5", "i1", "i2", "i4", "i5", "g1", "g2", "g4", "g5", "o1", "o2", "o4", "o5"];
     const arrCross = ["b3", "i3", "n1", "n2", "n3", "n4", "n5", "g3", "o3"];
+    const arrDiagonals = [["b1", "i2", "n3", "g4", "o5"], ["o1", "g2", "n3", "i4", "b5"]];
     const arrDiamond = ["b3", "i2", "i4", "n1", "n5", "g2", "g4", "o3"];
     const arrHeart = ["b2", "b3", "i1", "i4", "n2", "n5", "g1", "g4", "o2", "o3"];
     const arrInside = ["i2", "i3", "i4", "n2", "n3", "n4", "g2", "g3", "g4"];
     const arrOutside = ["b1", "b2", "b3", "b4", "b5", "i1", "i5", "n1", "n5", "g1", "g5", "o1", "o2", "o3", "o4", "o5"];
+    const arrRows = [["b1", "i1", "n1", "g1", "o1"], ["b2", "i2", "n2", "g2", "o2"], ["b3", "i3", "n3", "g3", "o3"], ["b4", "i4", "n4", "g4", "o4"], ["b5", "i5", "n5", "g5", "o5"]];
     const arrSmiley = ["b4", "i1", "i2", "i5", "n5", "g1", "g2", "g5", "o4"];
     const arrX = ["b1", "b5", "i2", "i4", "n3", "g2", "g4", "o1", "o5"];
 
@@ -90,20 +90,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 td0.appendChild(flagEl);
                 td0.appendChild(br);
                 td0.appendChild(gameEl);
-                // cell: user wins
+                // cell: user's wins
                 let td1 = tr.insertCell(1);
-                //////
                 let winsEl = document.createTextNode(userWinCount);
                 td1.appendChild(winsEl);
-                // cell: ai wins
+                // cell: ai's wins
                 let td2 = tr.insertCell(2);
                 let losesEl = document.createTextNode(aiWinCount);
                 td2.appendChild(losesEl);
-                // cell: high score
+                // cell: user high score
                 let td3 = tr.insertCell(3);
                 let scoreEl = document.createTextNode(highScore);
                 td3.appendChild(scoreEl);
-                // cell: play button (specific game)
+                // cell: play button (for specific game)
                 let td4 = tr.insertCell(4);
                 let buttonEl = document.createElement("button");
                 buttonEl.innerHTML = "Play";
@@ -126,24 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // helper: generates global variables based on 'games' for User/AI/Goal, then calls getGameCards()
     function generateGameSettings(game) {
         players.forEach((player) => {
-            window[`${player}${game}`] = []; // needs generated first for each
-            // generate all 'User', 'Goal', and 'AI' variables
+            window[`${player}${game}`] = []; // generate global variables for each
             switch (game) {
-                case "Columns": // must be repeated 5x (for each column)
-                    columns.forEach((col) => {
-                        window[`${player}${game}`].push(getGameCards(player, game, `${player}-${col}`));
-                    });
+                case "Columns":
+                case "Rows":
+                case "Diagonals":
+                    // repeat 5x (cols/rows) or 2x (diagonals)
+                    eval(`arr${game}`).forEach((arr) => window[`${player}${game}`].push(getGameCards(player, arr)));
                     break;
-                case "Rows": // must be repeated 5x (for each row)
-                    rows.forEach((row) => {
-                        window[`${player}${game}`].push(getGameCards(player, game, row));
-                    });
-                    break;
-                case "Diagonals": // must be repeated 2x (for each ltr or rtl)
-                    // TBD
-                    break;
-                default: // all other 'games' (not cols/rows/diagonals)
-                    window[`${player}${game}`] = getGameCards(player, game, eval(`arr${game}`));
+                default: // all other 'games'
+                    window[`${player}${game}`] = getGameCards(player, eval(`arr${game}`));
                     break;
             }
         });
@@ -152,38 +143,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // generate the goal-grid with the cards required to win
     function generateGoalGrid(game) {
+        cards = window[`goal${game}`];
         switch (game) {
             case "Columns":
             case "Rows":
-                cards = window[`goal${game}`];
-                cards[2].forEach((card) => {
-                    card.classList.add("correct");
-                });
+                // cards = window[`goal${game}`];
+                cards[2].forEach((card) => card.classList.add("correct"));
+                break;
+            case "Diagonals":
+                // cards = window[`goal${game}`];
+                cards[1].forEach((card) => card.classList.add("correct"));
                 break;
             default:
-                cards = window[`goal${game}`];
-                cards.forEach((card) => {
-                    card.classList.add("correct");
-                });
+                // cards = window[`goal${game}`];
+                cards.forEach((card) => card.classList.add("correct"));
                 break;
         }
     }
 
 
     // helper function: generate gameCards required to win
-    function getGameCards(player, game, arr) {
-        switch (game) {
-            case "Columns": // any vertical column
-                return document.querySelectorAll(`#${player}-board li[id^=${arr}]`);
-            case "Rows": // any horizontal row
-                return document.querySelectorAll(`#${player}-board li[id$='${arr}']`);
-            // case "Diagonals": // either diagonal direction
-                // return document.querySelectorAll(`#${player}-board li[id^=${arr}]`);
-            default:
-                let gameArr = [];
-                arr.forEach((tile) => gameArr.push(`#${player}-board li[id^='${player}-${tile}'].card`));
-                return document.querySelectorAll(gameArr);
-        }
+    function getGameCards(player, arr) {
+        let gameArr = [];
+        arr.forEach((card) => gameArr.push(`#${player}-board li[id^='${player}-${card}'].card`));
+        return document.querySelectorAll(gameArr);
     }
 
 
@@ -199,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "Random":
                 // assign a random 'game' if user selects 'Random'
                 game = games[Math.floor(Math.random() * games.length)];
+                break;
         }
         generateGameSettings(game);
     }
@@ -219,6 +203,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 checkForLingoBingo(Array.from(value[2]), player);
                 checkForLingoBingo(Array.from(value[3]), player);
                 checkForLingoBingo(Array.from(value[4]), player);
+                break;
+            case "Diagonals":
+                value = window[`${player}${game}`];
+                checkForLingoBingo(Array.from(value[0]), player);
+                checkForLingoBingo(Array.from(value[1]), player);
                 break;
             default: // game = all other games
                 checkForLingoBingo(Array.from(window[`${player}${game}`]), player);
@@ -244,10 +233,10 @@ document.addEventListener("DOMContentLoaded", () => {
             isLingoBingo(player, cardsToCheck);
         } else {
             // resultList is entirely 'false'
-            setTimeout(() => { // timeout needed for cols/rows for all 5x checks
+            setTimeout(() => { // minor timeout needed for cols/rows/diagonals for all checks
                  // deduct half of the player's points
                 if (!resultList.includes(true) && player == "user") deductHalf();
-            }, 50); // slight delay due to checking all cols/rows
+            }, 50);
         }
     }
 
