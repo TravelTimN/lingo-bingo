@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- meta -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+    <meta name="theme-color" content="#2196F3">
+    <meta name="author" content="Tim Nelson">
+    <meta name="description" content="Lingo Bingo | Interactive Language Learning Game | by: Tim Nelson">
+    <meta name="url" content="https://tim.2bn.dev/lingo-bingo">
+    <!-- links -->
     <link rel='icon' sizes="192x192" id="favicon" href="assets/svg/gb.svg" type="image/x-icon">
     <link rel="stylesheet" href="assets/css/style-sm.css" type="text/css">
     <link rel="stylesheet" href="assets/css/style-md.css" type="text/css">
@@ -31,7 +38,6 @@
             <span class="tooltip">Score<br>Board</span>
         </span>
     </nav>
-
 
     <main>
 
@@ -66,7 +72,6 @@
             </ul>
         </section>
 
-
         <section id="stats">
             <!-- button: new game -->
             <button id="btn-new" class="button"><span class="bold">NEW GAME</span></button>
@@ -80,10 +85,8 @@
             <div id="flag"><p><img src="assets/svg/gb.svg" alt="gb flag" class="flag"><br class="ignore"><span id="game-span" class="bold">-</span></p></div>
         </section>
 
-
         <!-- current word -->
         <aside id="word"><p id="word-span" class="bold">Click 'New Game'</p></aside>
-
 
         <section id="ai">
             <!-- grid: Goal -->
@@ -147,7 +150,6 @@
 
     </main>
 
-
     <!-- modal: game settings -->
     <aside id="modal-settings" class="modal">
         <div class="modal-container">
@@ -192,10 +194,10 @@
                             <td>
                                 <label for="game-list"><small>GAME</small></label><br>
                                 <select name="game-list" id="game-list">
-                                    <optgroup>
+                                    <optgroup label="">
                                         <option value="Random" selected>Random</option>
                                     </optgroup>
-                                    <optgroup>
+                                    <optgroup label="">
                                         <option value="Blackout">Blackout</option>
                                         <option value="Bullseye">Bullseye</option>
                                         <option value="Columns">Columns</option>
@@ -222,7 +224,6 @@
         </div>
     </aside>
 
-
     <!-- modal: scoreboard -->
     <aside id="modal-scoreboard" class="modal">
         <div class="modal-container">
@@ -247,7 +248,7 @@
         </div>
     </aside>
 
-
+    <!-- scripts -->
     <script src="assets/data/library.js"></script>
     <script src="assets/js/confetti.js"></script>
     <script src="assets/js/script.js"></script>
