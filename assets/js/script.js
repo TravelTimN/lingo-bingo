@@ -485,6 +485,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // TEST!!!! ENABLE USER CARDS FOR TESTING SAFARI
+    // let keys = ["word", "emoji", "aria", "gb"]; // only get these keys from [allCards]
+    //     let allCardsSelectedLanguage = allCards.map((val) => {
+    //         let obj = {};
+    //         keys.forEach((key) => obj[key] = val[key]);
+    //         return obj;
+    //     });
+    // populateCards(getRandomCards(allCardsSelectedLanguage, 25), "#user-board .card .inner .back .emoji");
+    // let xxx = document.querySelectorAll("#user-board .card .inner");
+    // xxx.forEach((x)=>x.classList.add("flipped"));
+
+
     // helper: populate grid
     function populateCards(array, grid) {
         let cards = document.querySelectorAll(grid);
@@ -504,8 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // flip each card with slight delay each
-    // https://stackoverflow.com/a/41924097
+    // flip each card with slight delay each : https://stackoverflow.com/a/41924097
     function flipCards(cards, grid) {
         let cardIndex = 0;
         cardInterval = setInterval(() => {
