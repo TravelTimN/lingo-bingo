@@ -1,7 +1,15 @@
+/* prefixed using https://autoprefixer.github.io */
+
 /* sm: max-width: 559px */
 /* md: min-width: 600px */
 /* lg: min-width: 992px */
 /* xl: min-width: 1200px */
+
+
+/* FONTS */
+@font-face {font-family: "emoji-one"; src: url("../fonts/emoji_one_color.ttf") format("truetype");}
+@font-face {font-family: "noto"; src: url("../fonts/noto_color_emoji.ttf") format("truetype");}
+@font-face {font-family: "twemoji"; src: url("../fonts/twemoji_color.ttf") format("truetype");}
 
 
 /* ROOT VARIABLES */
@@ -35,16 +43,18 @@
     -webkit-user-select: none;
 }
 
-*, *::after, *::before {box-sizing: border-box;}
-*::selection {background-color: transparent;}
+*, *::after, *::before {-webkit-box-sizing: border-box; box-sizing: border-box;}
+*::-moz-selection, *::selection {background-color: transparent;}
 
 body {
     font-family: "Segoe UI", Roboto, "Open Sans", "Helvetica Neue", sans-serif;
     height: calc(100vh - 0.5em);
+    display: -ms-grid;
     display: grid;
     background-color: rgba(var(--blue), 1);
     margin: 0.5em;
     margin-top: 0;
+         -ms-grid-rows: auto 1fr;
     grid-template-rows: auto 1fr;
     grid-template-areas:
         "nav"
@@ -88,8 +98,11 @@ button {
     border: 5px solid rgba(var(--white), 1);
     outline: transparent;
     text-shadow: 2px 2px 2px rgba(var(--black), 0.5);
-    box-shadow: 0 0 0 3px rgba(var(--green), 1);
-    transition: all 0.15s ease-in-out;
+    -webkit-box-shadow: 0 0 0 3px rgba(var(--green), 1);
+            box-shadow: 0 0 0 3px rgba(var(--green), 1);
+    -webkit-transition: all 0.15s ease-in-out;
+         -o-transition: all 0.15s ease-in-out;
+            transition: all 0.15s ease-in-out;
 }
 
 /* SELECTS */
@@ -100,7 +113,8 @@ select {cursor: pointer;}
 
 .disabled {
     background-color: rgba(var(--greyL2), 1);
-    box-shadow: 0 0 0 4px rgba(var(--greyL2), 1);
+    -webkit-box-shadow: 0 0 0 4px rgba(var(--greyL2), 1);
+            box-shadow: 0 0 0 4px rgba(var(--greyL2), 1);
     pointer-events: none;
 }
 
@@ -116,21 +130,37 @@ select {cursor: pointer;}
     height: auto;
     vertical-align: middle;
     border-radius: calc(var(--borderRadius) / 2);
-    box-shadow: 2px 2px 2px rgba(var(--black), 0.5);
+    -webkit-box-shadow: 2px 2px 2px rgba(var(--black), 0.5);
+            box-shadow: 2px 2px 2px rgba(var(--black), 0.5);
 }
 
 /* NAV */
 nav {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
     width: 100%;
-    align-content: center;
+    -ms-flex-line-pack: center;
+        align-content: center;
     padding: 0.25em 0;
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 2;
+    display: -ms-grid;
     display: grid;
     grid-area: nav;
+    -ms-grid-columns: (1fr)[4];
     grid-template-columns: repeat(4, 1fr);
     background-color: rgba(var(--blue), 0.5);
+    background: -webkit-gradient(linear,
+                left top, right top,
+                color-stop(25%, rgba(var(--blue), 1)),
+                color-stop(50%, rgba(var(--blueL4), 1)),
+                color-stop(75%, rgba(var(--blue), 1)));
+    background: -o-linear-gradient(left,
+                rgba(var(--blue), 1) 25%,
+                rgba(var(--blueL4), 1) 50%,
+                rgba(var(--blue), 1) 75%);
     background: linear-gradient(90deg,
                 rgba(var(--blue), 1) 25%,
                 rgba(var(--blueL4), 1) 50%,
@@ -147,16 +177,21 @@ nav .emoji .tooltip {display: none;}
 
 /* MAIN */
 main {
+    -ms-grid-row: 2;
+    -ms-grid-column: 1;
     width: 100%;
     height: 100%;
     padding: 1em 0;
     border-radius: var(--borderRadius);
     background-color: rgba(var(--greyL5), 1);
     grid-area: main;
+    display: -ms-grid;
     display: grid;
     gap: 0.25em;
+    -ms-grid-columns: 0.5em 0.25em 1fr 0.25em 0.5em 0.25em 1fr 0.25em 0.5em;
     grid-template-columns: 0.5em 1fr 0.5em 1fr 0.5em;
-    grid-template-areas:
+    -ms-grid-rows: auto 0.25em auto 0.25em auto;
+        grid-template-areas:
         ". user user user ."
         ". word word word ."
         ". stats . ai .";
@@ -165,16 +200,20 @@ main {
 /* BOARD GAMES */
 .card {
     background-color: transparent;
-    perspective: 1000px;
+    -webkit-perspective: 1000px;
+            perspective: 1000px;
     width: 100%;
     text-align: center;
-    justify-content: center;
-    align-content: center;
+      -webkit-box-pack: center;
+         -ms-flex-pack: center;
+       justify-content: center;
+    -ms-flex-line-pack: center;
+         align-content: center;
 }
 
 .emoji {
     outline: none;
-    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
     vertical-align: middle;
     text-shadow: 0 -2px 2px rgba(var(--white), 1), 0 2px 2px rgba(var(--black), 0.25);
 }
@@ -182,12 +221,24 @@ main {
 .board {list-style-type: none;}
 
 /* GRID: USER BOARD */
-#user {grid-area: user; align-self: center;}
+#user {
+    -ms-grid-row: 1;
+    -ms-grid-column: 3;
+    -ms-grid-column-span: 5;
+    grid-area: user;
+    -ms-grid-row-align: center;
+    align-self: center;
+}
+
 #user-board {
+    display: -ms-grid;
     display: grid;
+    -ms-grid-columns: var(--card) 0.75em var(--card) 0.75em var(--card) 0.75em var(--card) 0.75em var(--card);
     grid-template-columns: repeat(5, var(--card));
     gap: 0.75em;
-    justify-content: center;
+    -webkit-box-pack: center;
+       -ms-flex-pack: center;
+     justify-content: center;
 }
 
 #user-board .front {
@@ -196,12 +247,21 @@ main {
     color: rgba(var(--white), 1);
     text-shadow: 3px 3px 3px rgba(var(--black), 1);
     text-align: center;
+    display: -ms-grid;
     display: grid;
-    align-items: center;
+    -webkit-box-align: center;
+       -ms-flex-align: center;
+          align-items: center;
     line-height: 1;
     height: var(--card);
     border-radius: var(--borderRadius);
-    box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
+    -webkit-box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
+            box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
+    background: -o-repeating-linear-gradient(135deg,
+            rgba(var(--blue), 1),
+            rgba(var(--blue), 1) 0.25em,
+            rgba(var(--blueL4), 1) 0.25em,
+            rgba(var(--blueL4), 1) 0.5em);
     background: repeating-linear-gradient(-45deg,
             rgba(var(--blue), 1),
             rgba(var(--blue), 1) 0.25em,
@@ -213,12 +273,18 @@ main {
     position: relative;
     width: var(--card);
     height: var(--card);
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
+    -webkit-transition: -webkit-transform 0.6s;
+            transition: -webkit-transform 0.6s;
+         -o-transition: transform 0.6s;
+            transition: transform 0.6s;
+            transition: transform 0.6s, -webkit-transform 0.6s;
+    -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
 }
 
 #user-board .card .inner.flipped {
-    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg); /* fixes Safari */
+            transform: rotateY(180deg);
 }
 
 #user-board .front,
@@ -226,16 +292,22 @@ main {
     position: absolute;
     width: var(--card);
     height: var(--card);
-    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden; /* fixes Safari */
+            backface-visibility: hidden;
 }
 
 #user-board .back {
+    display: -ms-grid;
     display: grid;
-    align-items: center;
-    transform: rotateY(180deg);
+    -webkit-box-align: center;
+       -ms-flex-align: center;
+          align-items: center;
+    -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
     border-radius: var(--borderRadius);
     background-color: rgba(var(--white), 1);
-    box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
+    -webkit-box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
+            box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
 }
 
 #user-board .back .emoji {
@@ -254,36 +326,46 @@ main {
 #user-board .card .inner .back.incorrect {
     border-radius: var(--borderRadius);
     background-color: rgba(var(--red), 1);
-    animation: wiggleCard 0.5s linear;
+    -webkit-animation: wiggleCard 0.5s linear;
+            animation: wiggleCard 0.5s linear;
 }
 
 /* user has incorrect LingoBingo */
 #user-board.incorrect .card {
     border-radius: var(--borderRadius);
-    box-shadow: 0 0 4px 4px rgba(var(--red), 1);
-    animation: wiggleBoard 0.5s linear;
+    -webkit-box-shadow: 0 0 4px 4px rgba(var(--red), 1);
+            box-shadow: 0 0 4px 4px rgba(var(--red), 1);
+    -webkit-animation: wiggleBoard 0.5s linear;
+            animation: wiggleBoard 0.5s linear;
 }
 
 /* user won - pulse winning cards */
 #user-board .card .inner .back.correct.winning-tiles,
 .chicken-dinner {
-    animation: pulseUser 2s ease-out infinite;
+    -webkit-animation: pulseUser 2s ease-out infinite;
+            animation: pulseUser 2s ease-out infinite;
 }
 
 /* STATS */
-#btn-new {grid-area: btn-new;}
-#btn-lingobingo {grid-area: btn-lingobingo;}
-#timer {grid-area: timer;}
-#score {grid-area: score;}
-#flag {grid-area: flag;}
+#btn-new {-ms-grid-row: 1; -ms-grid-column: 1; grid-area: btn-new;}
+#btn-lingobingo {-ms-grid-row: 3; -ms-grid-column: 1; grid-area: btn-lingobingo;}
+#timer {-ms-grid-row: 5; -ms-grid-column: 1; grid-area: timer;}
+#score {-ms-grid-row: 7; -ms-grid-column: 1; grid-area: score;}
+#flag {-ms-grid-row: 9; -ms-grid-column: 1; grid-area: flag;}
 
 #stats {
+    -ms-grid-row: 5;
+    -ms-grid-column: 3;
     width: 100%;
     grid-area: stats;
+    display: -ms-grid;
     display: grid;
     text-align: center;
-    align-items: center;
+    -webkit-box-align: center;
+       -ms-flex-align: center;
+          align-items: center;
     gap: 0.5em;
+    -ms-grid-rows: 1fr 0.5em 1fr 0.5em 1fr 0.5em 1fr 0.5em 1fr;
     grid-template-rows: repeat(5, 1fr);
     grid-template-areas:
         "btn-new"
@@ -296,9 +378,11 @@ main {
 #btn-new, #btn-lingobingo, #timer, #score, #flag {
     width: 90%;
     height: 90%;
+    display: -ms-grid;
     display: grid;
     font-size: 1.25em;
-    align-content: center;
+    -ms-flex-line-pack: center;
+         align-content: center;
     border-radius: var(--borderRadius);
 }
 
@@ -307,7 +391,8 @@ main {
     border: 5px solid rgba(var(--white), 1);
     outline: transparent;
     text-shadow: 0 -2px 2px rgba(var(--white), 1), 0 2px 2px rgba(var(--black), 0.25);
-    box-shadow: 0 0 6px rgba(var(--blueD4), 1);
+    -webkit-box-shadow: 0 0 6px rgba(var(--blueD4), 1);
+            box-shadow: 0 0 6px rgba(var(--blueD4), 1);
 }
 
 /* STATS: SCORE & TIMER */
@@ -315,16 +400,21 @@ main {
     color: rgba(var(--white), 1); text-shadow: 2px 2px 2px rgba(var(--black), 0.5);
 }
 #score.correct, #timer.correct {background-color: rgba(var(--green), 1);}
-#score.incorrect, #timer.incorrect {background-color: rgba(var(--red), 1); box-shadow: 0 0 6px rgba(var(--red), 1);}
+#score.incorrect, #timer.incorrect {background-color: rgba(var(--red), 1); -webkit-box-shadow: 0 0 6px rgba(var(--red), 1); box-shadow: 0 0 6px rgba(var(--red), 1);}
 
 /* GAME SETUP */
 #ai {
+    -ms-grid-row: 5;
+    -ms-grid-column: 7;
     width: 100%;
     grid-area: ai;
+    display: -ms-grid;
     display: grid;
     gap: 0.5em;
     text-align: center;
-    align-items: center;
+    -webkit-box-align: center;
+       -ms-flex-align: center;
+          align-items: center;
     grid-template-areas:
         "goal-board"
         "ai-board";
@@ -332,6 +422,10 @@ main {
 
 /* current word displayed each round */
 #word {
+    -ms-grid-row: 3;
+    -ms-grid-column: 3;
+    -ms-grid-column-span: 5;
+    display: -ms-grid;
     display: grid;
     grid-area: word;
     margin: 0.5em auto;
@@ -339,7 +433,9 @@ main {
     line-height: 2;
     letter-spacing: 2px;
     color: rgba(var(--blueD4), 1);
-    align-items: center;
+    -webkit-box-align: center;
+       -ms-flex-align: center;
+          align-items: center;
     text-align: center;
     text-shadow: 0 -2px 2px rgba(var(--white), 1), 0 2px 2px rgba(var(--black), 0.25);
     font-size: x-large;
@@ -347,13 +443,18 @@ main {
     border: 5px solid rgba(var(--white), 1);
     border-radius: var(--borderRadius);
     outline: transparent;
-    box-shadow: 0 0 6px rgba(var(--blueD4), 1);
+    -webkit-box-shadow: 0 0 6px rgba(var(--blueD4), 1);
+            box-shadow: 0 0 6px rgba(var(--blueD4), 1);
 }
 
 /* GRID: GOAL BOARD */
 #goal-board {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
     grid-area: goal-board;
+    display: -ms-grid;
     display: grid;
+    -ms-grid-columns: calc(var(--card) / 4) 0.25em calc(var(--card) / 4) 0.25em calc(var(--card) / 4) 0.25em calc(var(--card) / 4) 0.25em calc(var(--card) / 4);
     grid-template-columns: repeat(5, calc(var(--card) / 4));
     gap: 0.25em;
 }
@@ -368,13 +469,18 @@ main {
 
 #goal-board .card.correct {
     background-color: rgba(var(--green), 1);
-    animation: fadeIn 2s ease-out;
+    -webkit-animation: fadeIn 2s ease-out;
+            animation: fadeIn 2s ease-out;
 }
 
 /* GRID: AI BOARD */
 #ai-board {
+    -ms-grid-row: 3;
+    -ms-grid-column: 1;
     grid-area: ai-board;
+    display: -ms-grid;
     display: grid;
+    -ms-grid-columns: calc(var(--card) / 2) 0.5em calc(var(--card) / 2) 0.5em calc(var(--card) / 2) 0.5em calc(var(--card) / 2) 0.5em calc(var(--card) / 2);
     grid-template-columns: repeat(5, calc(var(--card) / 2));
     gap: 0.5em;
 }
@@ -383,7 +489,13 @@ main {
     height: calc(var(--card) / 2);
     width: calc(var(--card) / 2);
     border-radius: calc(var(--borderRadius) / 2);
-    box-shadow: 0 0 4px 0 rgba(var(--black), 0.5);
+    -webkit-box-shadow: 0 0 4px 0 rgba(var(--black), 0.5);
+            box-shadow: 0 0 4px 0 rgba(var(--black), 0.5);
+    background: -o-repeating-linear-gradient(45deg,
+            rgba(var(--greyD2), 1),
+            rgba(var(--greyD2), 1) 0.5em,
+            rgba(var(--grey), 1) 0.5em,
+            rgba(var(--grey), 1) 1em);
     background: repeating-linear-gradient(45deg,
             rgba(var(--greyD2), 1),
             rgba(var(--greyD2), 1) 0.5em,
@@ -392,6 +504,11 @@ main {
 }
 
 #ai-board .card.correct {
+    background: -o-repeating-linear-gradient(45deg,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1) 0.5em,
+            rgba(var(--greenL4), 1) 0.5em,
+            rgba(var(--greenL4), 1) 1em);
     background: repeating-linear-gradient(45deg,
             rgba(var(--green), 1),
             rgba(var(--green), 1) 0.5em,
@@ -401,7 +518,8 @@ main {
 
 /* ai won - blink winning cards */
 #ai-board .card.correct.winning-tiles {
-    animation: blinkAI 2s ease-out infinite;
+    -webkit-animation: blinkAI 2s ease-out infinite;
+            animation: blinkAI 2s ease-out infinite;
 }
 
 /* MODALS */ /* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_modal2 */
@@ -426,13 +544,16 @@ main {
     color: rgba(var(--white), 1);
     margin: 5% auto;
     width: 100%;
-    height: 90%;
-    animation: 0.4s slideIn ease-in-out;
+    height: 85%;
+    -webkit-animation: 0.4s slideIn ease-in-out;
+            animation: 0.4s slideIn ease-in-out;
 }
 
 .modal-header {
+    display: -ms-grid;
     display: grid;
-    align-content: center;
+    -ms-flex-line-pack: center;
+         align-content: center;
     padding: 5px;
     border-top-left-radius: var(--borderRadius);
     border-top-right-radius: var(--borderRadius);
@@ -446,7 +567,9 @@ main {
 
 .modal-body {
     overflow-y: scroll;
-    transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+        -ms-transform: scaleX(-1);
+            transform: scaleX(-1);
     margin: 0 0.5em;
     height: 80%;
     border-radius: var(--borderRadius);
@@ -455,8 +578,10 @@ main {
 }
 
 .modal-close {
+    display: -ms-grid;
     display: grid;
-    align-content: center;
+    -ms-flex-line-pack: center;
+         align-content: center;
     height: 10%;
     padding: 5px;
     border-bottom-left-radius: var(--borderRadius);
@@ -466,7 +591,9 @@ main {
     letter-spacing: 0.25em;
     text-align: center;
     text-shadow: 2px 2px 2px rgba(var(--black), 0.5);
-    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+         -o-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
 }
 
 .modal-close:hover {
@@ -475,13 +602,16 @@ main {
 }
 
 .modal-body table {
-    transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+        -ms-transform: scaleX(-1);
+            transform: scaleX(-1);
     border-collapse: separate;
 }
 
 /* MODAL: SETTINGS */
 #modal-settings .modal-body {
-    align-content: center;
+    -ms-flex-line-pack: center;
+         align-content: center;
     padding: 1em;
     text-align: center;
 }
@@ -506,18 +636,16 @@ main {
     border-radius: var(--borderRadius);
     border: 3px solid rgba(var(--black), 1);
     background: rgba(var(--blueD4), 1);
+    background: -webkit-gradient(linear, left bottom, left top, from(rgba(var(--blueD4), 1)), to(rgba(var(--blue), 1)));
+    background: -o-linear-gradient(bottom, rgba(var(--blueD4), 1) 0%, rgba(var(--blue), 1) 100%);
     background: linear-gradient(0deg, rgba(var(--blueD4), 1) 0%, rgba(var(--blue), 1) 100%);
 }
 
 #modal-settings select:focus {outline: none;}
 
-#modal-settings select optgroup {
-    color: rgba(var(--white), 1);
-    background-color: rgba(var(--black), 1);
-}
-
 #modal-settings select option {
     color: rgba(var(--black), 1);
+    text-shadow: none;
     background-color: rgba(var(--blue), 0.75);
 }
 
@@ -547,6 +675,7 @@ main {
 }
 
 #modal-scoreboard table thead tr th {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     color: rgba(var(--white), 1);
@@ -575,11 +704,13 @@ main {
     width: 1.5em;
     border-radius: 2px;
     border: 1px solid rgba(var(--black), 0.5);
-    box-shadow: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
 }
 
 #modal-scoreboard table tbody tr {
-    box-shadow: 0px 0px 4px 0px rgba(var(--blue), 0.5);
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(var(--blue), 0.5);
+            box-shadow: 0px 0px 4px 0px rgba(var(--blue), 0.5);
 }
 
 #modal-scoreboard table tbody tr:hover td {
@@ -589,7 +720,8 @@ main {
 #modal-scoreboard .btn-play {
     border-radius: 2px;
     border: none;
-    box-shadow: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
 }
 
 #modal-scoreboard .btn-play:hover {
@@ -614,37 +746,59 @@ main {
 }
 
 /* KEYFRAME ANIMATIONS */
+@-webkit-keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
 @keyframes fadeIn {
     0% {opacity: 0;}
     100% {opacity: 1;}
 }
 
 /* user has incorrect card */
+@-webkit-keyframes wiggleCard {
+    8%, 41% {-webkit-transform: translateX(-10px) rotateY(180deg);transform: translateX(-10px) rotateY(180deg);}
+    25%, 58% {-webkit-transform: translateX(10px) rotateY(180deg);transform: translateX(10px) rotateY(180deg);}
+    75% {-webkit-transform: translateX(-5px) rotateY(180deg);transform: translateX(-5px) rotateY(180deg);}
+    92% {-webkit-transform: translateX(5px) rotateY(180deg);transform: translateX(5px) rotateY(180deg);}
+    0%, 100% {-webkit-transform: translateX(0) rotateY(180deg);transform: translateX(0) rotateY(180deg);}
+}
 @keyframes wiggleCard {
-    8%, 41% {transform: translateX(-10px) rotateY(180deg);}
-    25%, 58% {transform: translateX(10px) rotateY(180deg);}
-    75% {transform: translateX(-5px) rotateY(180deg);}
-    92% {transform: translateX(5px) rotateY(180deg);}
-    0%, 100% {transform: translateX(0) rotateY(180deg);}
+    8%, 41% {-webkit-transform: translateX(-10px) rotateY(180deg);transform: translateX(-10px) rotateY(180deg);}
+    25%, 58% {-webkit-transform: translateX(10px) rotateY(180deg);transform: translateX(10px) rotateY(180deg);}
+    75% {-webkit-transform: translateX(-5px) rotateY(180deg);transform: translateX(-5px) rotateY(180deg);}
+    92% {-webkit-transform: translateX(5px) rotateY(180deg);transform: translateX(5px) rotateY(180deg);}
+    0%, 100% {-webkit-transform: translateX(0) rotateY(180deg);transform: translateX(0) rotateY(180deg);}
 }
 
 /* user has incorrect LingoBingo */
+@-webkit-keyframes wiggleBoard {
+    8%, 41% {-webkit-transform: translateX(-10px);transform: translateX(-10px);}
+    25%, 58% {-webkit-transform: translateX(10px);transform: translateX(10px);}
+    75% {-webkit-transform: translateX(-5px);transform: translateX(-5px);}
+    92% {-webkit-transform: translateX(5px);transform: translateX(5px);}
+    0%, 100% {-webkit-transform: translateX(0);transform: translateX(0);}
+}
 @keyframes wiggleBoard {
-    8%, 41% {transform: translateX(-10px);}
-    25%, 58% {transform: translateX(10px);}
-    75% {transform: translateX(-5px);}
-    92% {transform: translateX(5px);}
-    0%, 100% {transform: translateX(0);}
+    8%, 41% {-webkit-transform: translateX(-10px);transform: translateX(-10px);}
+    25%, 58% {-webkit-transform: translateX(10px);transform: translateX(10px);}
+    75% {-webkit-transform: translateX(-5px);transform: translateX(-5px);}
+    92% {-webkit-transform: translateX(5px);transform: translateX(5px);}
+    0%, 100% {-webkit-transform: translateX(0);transform: translateX(0);}
 }
 
 /* user won */
+@-webkit-keyframes pulseUser {
+    0%, 100% {background-color: rgba(var(--yellowA2), 1);}
+    50% {background-color: rgba(var(--green), 1);}
+}
 @keyframes pulseUser {
     0%, 100% {background-color: rgba(var(--yellowA2), 1);}
     50% {background-color: rgba(var(--green), 1);}
 }
 
 /* ai won */
-@keyframes blinkAI {
+@-webkit-keyframes blinkAI {
     0%, 100% {background: repeating-linear-gradient(45deg,
             rgba(var(--green), 1),
             rgba(var(--green), 1)0 0.5em,
@@ -656,8 +810,32 @@ main {
             rgba(var(--greenL4), 1) 0.5em,
             rgba(var(--greenL4), 1) 1em);}
 }
+@keyframes blinkAI {
+    0%, 100% {background: -o-repeating-linear-gradient(45deg,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1)0 0.5em,
+            rgba(var(--yellowA2), 1) 0.5em,
+            rgba(var(--yellowA2), 1) 1em);background: repeating-linear-gradient(45deg,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1)0 0.5em,
+            rgba(var(--yellowA2), 1) 0.5em,
+            rgba(var(--yellowA2), 1) 1em);}
+    50% {background: -o-repeating-linear-gradient(45deg,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1) 0.5em,
+            rgba(var(--greenL4), 1) 0.5em,
+            rgba(var(--greenL4), 1) 1em);background: repeating-linear-gradient(45deg,
+            rgba(var(--green), 1),
+            rgba(var(--green), 1) 0.5em,
+            rgba(var(--greenL4), 1) 0.5em,
+            rgba(var(--greenL4), 1) 1em);}
+}
 
 /* modal animations */
+@-webkit-keyframes slideIn {
+    from {top: -300px; opacity: 0;}
+    to {top: 0; opacity: 1;}
+}
 @keyframes slideIn {
     from {top: -300px; opacity: 0;}
     to {top: 0; opacity: 1;}

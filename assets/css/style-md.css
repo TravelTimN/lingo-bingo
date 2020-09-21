@@ -24,9 +24,12 @@
         background-color: rgba(var(--blueD4), 1);
         text-shadow: 2px 2px 2px rgba(var(--black), 1);
         border: 2px solid rgba(var(--blue), 1);
-        box-shadow: 2px 2px 0.25em rgba(var(--black), 1);
+        -webkit-box-shadow: 2px 2px 0.25em rgba(var(--black), 1);
+                box-shadow: 2px 2px 0.25em rgba(var(--black), 1);
         border-radius: var(--borderRadius);
-        transition: opacity 0.5s ease-in-out;
+        -webkit-transition: opacity 0.5s ease-in-out;
+             -o-transition: opacity 0.5s ease-in-out;
+                transition: opacity 0.5s ease-in-out;
     }
 
     nav .emoji .tooltip::after {
@@ -58,10 +61,11 @@
         background-color: rgba(var(--white), 1);
         text-shadow: none;
         border: 5px solid rgba(var(--green), 1);
-        box-shadow: 0 0 6px 0 rgba(var(--black), 0.5);
+        -webkit-box-shadow: 0 0 6px 0 rgba(var(--black), 0.5);
+                box-shadow: 0 0 6px 0 rgba(var(--black), 0.5);
     }
     
-    button:active, button:focus {box-shadow: none;}
+    button:active, button:focus {-webkit-box-shadow: none; box-shadow: none;}
 
     /* MAIN */
     main {
@@ -69,9 +73,12 @@
         height: 100%;
         padding: 1em 0;
         grid-area: main;
+        display: -ms-grid;
         display: grid;
         gap: 0.25em;
+             -ms-grid-columns: 0.5em 0.25em 1fr 0.25em 0.5em 0.25em 1fr 0.25em 0.5em;
         grid-template-columns: 0.5em 1fr 0.5em 1fr 0.5em;
+        -ms-grid-rows: auto 0.25em auto 0.25em auto;
         grid-template-areas:
             ". user user user ."
             ". word word word ."
@@ -82,7 +89,8 @@
     #user-board .card .inner .back:hover {
         cursor: pointer;
         border-radius: var(--borderRadius);
-        box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
+        -webkit-box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
+                box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
     }
 
     /* STATS */
