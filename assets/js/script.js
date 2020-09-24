@@ -2,15 +2,6 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // concept from Sean Murphy (CI alumnus)
-    const by = Object.freeze({
-        query: query => document.querySelector(query),
-        queryAll: queryAll => document.querySelectorAll(queryAll),
-        tag: tag => document.getElementsByTagName(tag),
-        id: id => document.getElementById(id),
-        className: className => document.getElementsByClassName(className),
-    });
-
     // constant variables
     const userBoard = by.id("user-board");
     const userTiles = by.queryAll("#user-board .card .inner .back");
