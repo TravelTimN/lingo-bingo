@@ -1,20 +1,44 @@
 /* jshint esversion: 8 */
 
+// concept from Sean Murphy (CI alumnus)
+const by = Object.freeze({
+    query: query => document.querySelector(query),
+    queryAll: queryAll => document.querySelectorAll(queryAll),
+    tag: tag => document.getElementsByTagName(tag),
+    id: id => document.getElementById(id),
+    className: className => document.getElementsByClassName(className),
+});
 
-// detecting the browser: https://stackoverflow.com/a/11219680 && https://stackoverflow.com/a/9851769
 const navAgt = navigator.userAgent;
-const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navAgt.indexOf(" OPR/") !== -1;
-const isFirefox = typeof (InstallTrigger) !== "undefined" && navAgt.indexOf(" Firefox/") !== -1;
-const isSafari = /constructor/i.test(window.HTMLElement) || (function (p) {return p.toString() === "[object SafariRemoteNotification]";})(!window["safari"] || (typeof(safari) !== "undefined" && safari.pushNotification)) || ((navAgt.indexOf("iPhone") !== -1 || navAgt.indexOf("iPad") !== -1 || navAgt.indexOf("Mac OS") !== -1) && navAgt.indexOf(" Safari/") !== -1);
-// const isSafari = ((navAgt.indexOf("iPhone") !== -1 || navAgt.indexOf("iPad") !== -1 || navAgt.indexOf("Mac OS") !== -1) && navAgt.indexOf(" Safari/") !== -1)
-const isIE = /*@cc_on!@*/ false || !!document.documentMode;
-const isEdge = !isIE && !!window.StyleMedia;
-const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.csi || !!window.chrome.runtime);
-const isEdgeChromium = isChrome && (navAgt.indexOf(" Edg/") !== -1);
-const isSamsungBrowser = navAgt.indexOf(" SamsungBrowser/") !== -1;
+const langList = by.id("language-list");
+const emojis = by.queryAll(".emoji");
 
-const langList = document.getElementById("language-list");
-const emojis = document.querySelectorAll(".emoji");
+// https://stackoverflow.com/a/38241481
+getOS();
+function getOS() {
+    let platform = navigator.platform;
+    let macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"];
+    let iosPlatforms = ["iPhone", "iPad", "iPod"];
+    let windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"];
+
+    if (macosPlatforms.indexOf(platform) !== -1) {os = "macOS";}
+    else if (iosPlatforms.indexOf(platform) !== -1) {os = "iOS";}
+    else if (windowsPlatforms.indexOf(platform) !== -1) {os = "Windows";}
+    else if (/android/gi.test(navAgt)) {os = "Android";}
+    else if (!os && /linux/gi.test(platform)) {os = "Linux";}
+}
+
+
+// detecting browser: https://stackoverflow.com/a/11219680 && https://stackoverflow.com/a/9851769
+const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || (/\s(opr|opera)\//gi.test(navAgt) && /(\smobile(\s|\/)?|)/gi.test(navAgt));
+const isFirefox = typeof (InstallTrigger) !== "undefined" && (/\sgecko\//gi.test(navAgt) && /\sfirefox\//gi.test(navAgt));
+const isSafari = (/(iphone|ipad|macintosh)/gi.test(navAgt) && /\sversion\//gi.test(navAgt) && /\ssafari\//gi.test(navAgt) && (os == "iOS" || os == "macOS"));
+const isIE = /*@cc_on!@*/ false || !!document.documentMode && (/(\smsie\s|\strident\/)/gi.test(navAgt));
+const isEdge = !isIE && !!window.StyleMedia;
+const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.csi || !!window.chrome.runtime) && /\schrome\//gi.test(navAgt);
+const isEdgeChromium = isChrome && (/\sedg(a?)\//gi.test(navAgt) && /(\smobile(\s|\/)?|)/gi.test(navAgt));
+const isSamsungBrowser = (/\ssamsungbrowser\//gi.test(navAgt) && /\smobile(\s|\/)/gi.test(navAgt));
+
 
 // update emoji icons/flags based on browser detection (and window.innerWidth for some)
 if (isChrome && !isOpera && !isEdgeChromium && !isSamsungBrowser) { // Chrome
