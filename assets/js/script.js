@@ -2,30 +2,39 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    // concept from Sean Murphy (CI alumnus)
+    const by = Object.freeze({
+        query: query => document.querySelector(query),
+        queryAll: queryAll => document.querySelectorAll(queryAll),
+        tag: tag => document.getElementsByTagName(tag),
+        id: id => document.getElementById(id),
+        className: className => document.getElementsByClassName(className),
+    });
+
     // constant variables
-    const userBoard = document.getElementById("user-board");
-    const userTiles = document.querySelectorAll("#user-board .card .inner .back");
-    const btnNew = document.getElementById("btn-new");
-    const btnLingoBingo = document.getElementById("btn-lingobingo");
-    const btnStart = document.getElementById("btn-start");
-    const btnSettings = document.getElementById("btn-settings");
-    const btnAudio = document.getElementById("btn-audio");
-    const btnScoreboard = document.getElementById("btn-scoreboard");
-    const languageList = document.getElementById("language-list");
-    const gameList = document.getElementById("game-list");
-    const flags = document.querySelectorAll(".flag");
-    const timerSpan = document.getElementById("timer-span");
-    const timerDiv = document.getElementById("timer");
-    const scoreSpan = document.getElementById("score-span");
-    const scoreDiv = document.getElementById("score");
-    const gameSpan = document.getElementById("game-span");
-    const wordSpan = document.getElementById("word-span");
-    const modals = document.querySelectorAll(".modal");
-    const modalSettings = document.getElementById("modal-settings");
-    const modalInfo = document.getElementById("modal-info");
-    const modalScoreboard = document.getElementById("modal-scoreboard");
-    const modalClose = document.querySelectorAll(".modal-close");
-    const toHide = document.querySelectorAll("small, br:not(.ignore)");
+    const userBoard = by.id("user-board");
+    const userTiles = by.queryAll("#user-board .card .inner .back");
+    const btnNew = by.id("btn-new");
+    const btnLingoBingo = by.id("btn-lingobingo");
+    const btnStart = by.id("btn-start");
+    const btnSettings = by.id("btn-settings");
+    const btnAudio = by.id("btn-audio");
+    const btnScoreboard = by.id("btn-scoreboard");
+    const languageList = by.id("language-list");
+    const gameList = by.id("game-list");
+    const flags = by.queryAll(".flag");
+    const timerSpan = by.id("timer-span");
+    const timerDiv = by.id("timer");
+    const scoreSpan = by.id("score-span");
+    const scoreDiv = by.id("score");
+    const gameSpan = by.id("game-span");
+    const wordSpan = by.id("word-span");
+    const modals = by.queryAll(".modal");
+    const modalSettings = by.id("modal-settings");
+    const modalInfo = by.id("modal-info");
+    const modalScoreboard = by.id("modal-scoreboard");
+    const modalClose = by.queryAll(".modal-close");
+    const toHide = by.queryAll("small, br:not(.ignore)");
     const players = ["user", "ai", "goal"];
 
     const games = ["Blackout", "Bullseye", "Columns", "Corners", "Cross", "Diagonals", "Diamond", "Heart", "Inside", "Outside", "Rows", "Smiley", "X"];
@@ -77,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     userWinCount = aiWinCount = highScore = "-";
                 }
                 // tbody: generate rows
-                let tbody = document.getElementById("tbody");
+                let tbody = by.id("tbody");
                 let br = document.createElement("br");
                 let tr = tbody.insertRow();
                 tr.id = `${btnLang}${btnGame}`;
@@ -173,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function getGameCards(player, arr) {
         let gameArr = [];
         arr.forEach((card) => gameArr.push(`#${player}-board li[id^='${player}-${card}'].card`));
-        return document.querySelectorAll(gameArr);
+        return by.queryAll(gameArr);
     }
 
 
@@ -302,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function languageSelection(flag) {
         flag.src = `assets/svg/${selectedLanguage}.svg`;
         flag.alt = `${selectedLanguage} flag`;
-        document.querySelector("link#favicon").href = `assets/svg/${selectedLanguage}.svg`;
+        by.query("link#favicon").href = `assets/svg/${selectedLanguage}.svg`;
         // recursive function calling self
         languageList.addEventListener("change", () => {
             selectedLanguage = languageList.options[languageList.selectedIndex].value;
@@ -331,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // game logic: start game
     function startGame() {
-        wordSpan.innerHTML = "... LOADING GAME ...";
+        wordSpan.innerHTML = "LOADING GAME";
         closeModals(); // close all modals
         // change btnAudio emoji if a muted-language and disable it
         if (mutedLangs.indexOf(selectedLanguage) >= 0) {
@@ -436,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // open scoreBoard and scroll to specific game
             modalScoreboard.style.display = "block";
             document.body.classList.add("disabled-overflow");
-            let thisGame = document.getElementById(langGame);
+            let thisGame = by.id(langGame);
             // https://stackoverflow.com/a/62043599
             thisGame.scrollIntoView({behavior: "smooth", block: "center"});
             thisGame.children[3].classList.add("chicken-dinner");
@@ -452,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let setGameLS = {"userWon": userWinCount, "aiWon": aiWinCount, "highScore": highScore};
         localStorage.setItem(langGame, JSON.stringify(setGameLS));
         // update scoreBoard modal
-        let gameCells = document.getElementById(langGame).getElementsByTagName("td");
+        let gameCells = by.id(langGame).getElementsByTagName("td");
         gameCells[1].innerHTML = userWinCount;
         gameCells[2].innerHTML = aiWinCount;
         gameCells[3].innerHTML = highScore;
@@ -461,7 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // reset all cards (user, ai, goal)
     function resetCards() {
-        cardsToReset = document.querySelectorAll("#user-board .card .inner .back .emoji, #ai-board .card, #goal-board .card");
+        cardsToReset = by.queryAll("#user-board .card .inner .back .emoji, #ai-board .card, #goal-board .card");
         cardsToReset.forEach((card) => {
             card.parentNode.parentNode.classList.remove("flipped"); // un-flip user cards
             card.parentNode.classList.remove("correct", "winning-tiles"); // user cards
@@ -493,13 +502,13 @@ document.addEventListener("DOMContentLoaded", () => {
     //         return obj;
     //     });
     // populateCards(getRandomCards(allCardsSelectedLanguage, 25), "#user-board .card .inner .back .emoji");
-    // let xxx = document.querySelectorAll("#user-board .card .inner");
+    // let xxx = by.queryAll("#user-board .card .inner");
     // xxx.forEach((x)=>x.classList.add("flipped"));
 
 
     // helper: populate grid
     function populateCards(array, grid) {
-        let cards = document.querySelectorAll(grid);
+        let cards = by.queryAll(grid);
         let i = 0;
         cards.forEach((card) => {
             // use emoji in HTML: https://www.kirupa.com/html5/emoji.htm
@@ -556,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function autocompleteAiGrid(word) {
         if (aiCards.includes(word)) {
             // https://stackoverflow.com/a/13449757
-            let aiCard = document.querySelector(`#ai-board .card .inner .back .emoji[data-emoji~="${word.word}"]`);
+            let aiCard = by.query(`#ai-board .card .inner .back .emoji[data-emoji~="${word.word}"]`);
             // give a delay to allow user to guess first in case of tie
             markAI = setTimeout(() => {
                 if (activeGame) aiCard.parentNode.parentNode.parentNode.classList.add("correct");
@@ -745,7 +754,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function closeModals() {
         // close any open modal
         modals.forEach((modal) => {
-            let hasClassCD = document.querySelectorAll(".chicken-dinner");
+            let hasClassCD = by.queryAll(".chicken-dinner");
             hasClassCD.forEach((item) => item.classList.remove("chicken-dinner"));
             modal.style.display = "none";
             document.body.classList.remove("disabled-overflow");
