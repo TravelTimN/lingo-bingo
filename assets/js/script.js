@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnLingoBingo = by.id("btn-lingobingo");
     const btnStart = by.id("btn-start");
     const btnSettings = by.id("btn-settings");
-    const btnAudio = by.id("btn-audio");
     const btnScoreboard = by.id("btn-scoreboard");
     const languageList = by.id("language-list");
     const gameList = by.id("game-list");
@@ -50,12 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let userCards, aiCards, selectedLanguage, game, langGame, getGameLS,
         userWinCount, aiWinCount, highScore, gameSetup, enableCards,
         currentGame, cardInterval, cardList, markAI, result, resultList;
-
-    // speech syntheses
-    let msg, msgVoice, msgLang, voices;
-    let speechAvailable = false;
-    const languages = ["gb", "nl", "fr", "de", "in", "ie", "it", "jp", "kr", "cn", "pl", "pt", "ru", "es"];
-    const mutedLangs = ["ie", "arb", "gr", "is", "no", "ro", "se", "tr", "vn"]; // languages to mute by default
 
 
     userTiles.forEach((card) => card.classList.add("disabled")); // disable user cards on load
@@ -333,12 +326,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function startGame() {
         wordSpan.innerHTML = "LOADING GAME";
         closeModals(); // close all modals
-        // change btnAudio emoji if a muted-language and disable it
-        if (mutedLangs.indexOf(selectedLanguage) >= 0) {
+        // check if selectedLanguage in user's browser speechSynth API
+        if (langCodes.indexOf(selectedLanguage) !== -1) {
+            btnAudio.style.pointerEvents = "auto";
+        } else { // lang not supported - disable audio button
             btnAudio.innerHTML = "🔇";
             btnAudio.style.pointerEvents = "none";
-        } else {
-            btnAudio.style.pointerEvents = "auto";
         }
         // start the game: words and timer
         currentGame = setInterval(() => {
@@ -486,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // TEST!!!! ENABLE USER CARDS FOR TESTING SAFARI
-    // let keys = ["word", "emoji", "aria", "gb"]; // only get these keys from [allCards]
+    // let keys = ["word", "emoji", "aria", "en"]; // only get these keys from [allCards]
     //     let allCardsSelectedLanguage = allCards.map((val) => {
     //         let obj = {};
     //         keys.forEach((key) => obj[key] = val[key]);
@@ -542,9 +535,17 @@ document.addEventListener("DOMContentLoaded", () => {
             answerList.push(cardList[0]); // push each word per round into an answerList
             wordSpan.innerHTML = cardList[0][lang];
             spokenWord = cardList[0][lang];
-            // verbalize spoken word if available
-            if (mutedLangs.indexOf(lang) < 0 && btnAudio.innerHTML != "🔇") {
-                speakWord(spokenWord, lang);
+            // speak word if available, and not muted
+            if (btnAudio.innerHTML != "🔇") {
+                // check if language is part of user's browser speechSynth API
+                if (speechAvailable && langCodes.indexOf(lang) !== -1) {
+                    btnAudio.style.pointerEvents = "auto";
+                    speakWord(spokenWord, lang);
+                } else {
+                    // no matching language code, disable audio button
+                    btnAudio.innerHTML = "🔇";
+                    btnAudio.style.pointerEvents = "none";
+                }
             }
             autocompleteAiGrid(cardList[0]); // function to fill-out AI grid
             cardList.shift(); // remove first item from cardList to avoid dupes
@@ -566,87 +567,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // speechSynthesis API
-    if ("speechSynthesis" in window) {
-        speechAvailable = true;
-        voices = window.speechSynthesis.getVoices();
-        btnAudio.classList.remove("disabled-audio");
-    } else {
-        speechAvailable = false;
-        alert("No SpeechSynthesis Available");
-        btnAudio.classList.add("disabled-audio");
-    }
-
-
-    // helper: speak the word if available
-    function speakWord(word, lang) {
-        if (speechAvailable) {
-            // synthesis supported
-            msg = new SpeechSynthesisUtterance();
-            switch (lang) {
-                case "de":
-                    msgVoice = voices[2];
-                    msgLang = "de-DE";
-                    break;
-                case "gb":
-                    msgVoice = voices[4];
-                    msgLang = "en-GB";
-                    break;
-                case "es":
-                    msgVoice = voices[7];
-                    msgLang = "es-US";
-                    break;
-                case "fr":
-                    msgVoice = voices[8];
-                    msgLang = "fr-FR";
-                    break;
-                case "in":
-                    msgVoice = voices[9];
-                    msgLang = "hi-IN";
-                    break;
-                case "it":
-                    msgVoice = voices[11];
-                    msgLang = "it-IT";
-                    break;
-                case "jp":
-                    msgVoice = voices[12];
-                    msgLang = "ja-JP";
-                    break;
-                case "kr":
-                    msgVoice = voices[13];
-                    msgLang = "ko-KR";
-                    break;
-                case "nl":
-                    msgVoice = voices[14];
-                    msgLang = "nl-NL";
-                    break;
-                case "pl":
-                    msgVoice = voices[15];
-                    msgLang = "pl-PL";
-                    break;
-                case "pt":
-                    msgVoice = voices[16];
-                    msgLang = "pt-BR";
-                    break;
-                case "ru":
-                    msgVoice = voices[17];
-                    msgLang = "ru-RU";
-                    break;
-                case "cn":
-                    msgVoice = voices[18];
-                    msgLang = "zh-CN";
-                    break;
-            }
-            msg.voice = msgVoice;
-            msg.text = word.toString();
-            msg.lang = msgLang.toString();
-            speechSynthesis.speak(msg);
-        }
-    }
-
-
     // toggle mute emoji
     btnAudio.addEventListener("click", () => {
+        speechSynthesis.cancel(); // immediately stop any spoken word
         btnAudio.innerHTML = (btnAudio.innerHTML == "🔊") ? "🔇" : "🔊";
     });
 
