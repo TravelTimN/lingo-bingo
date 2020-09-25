@@ -1,4 +1,4 @@
-let allCard = [
+let allCards = [
     {
         "word": "airplane",
         "emoji": "U+2708",
