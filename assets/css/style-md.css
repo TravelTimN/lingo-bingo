@@ -93,6 +93,11 @@
                 box-shadow: 0 0 4px 3px rgba(var(--blueD4), 1);
     }
 
+    #user-board .back .emoji {
+        font-size: 7vw;
+    }
+    
+
     /* STATS */
     #btn-new, #btn-lingobingo, #timer, #score, #flag {width: 100%;}
 
