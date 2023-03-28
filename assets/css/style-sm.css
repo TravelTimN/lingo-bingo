@@ -565,16 +565,27 @@ main {
     height: 10%;
 }
 
-.modal-body {
-    overflow-y: scroll;
+.modal-body:not(.speech-synth) {
     -webkit-transform: scaleX(-1);
         -ms-transform: scaleX(-1);
             transform: scaleX(-1);
+}
+
+.modal-body {
+    overflow-y: scroll;
     margin: 0 0.5em;
     height: 80%;
     border-radius: var(--borderRadius);
     background-color: rgba(var(--greyL5), 1);
     color: rgba(var(--black), 1);
+}
+
+.modal-body.speech-synth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 200%;
 }
 
 .modal-close {
