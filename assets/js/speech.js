@@ -56,7 +56,15 @@ if ("speechSynthesis" in window) {
     }
 } else {
     speechAvailable = false;
-    alert("No SpeechSynthesis Available"); // TEST! modal in lieu of alert() perhaps?
+    // alert("No SpeechSynthesis Available");
+    const modalSpeech = by.id("modal-speech");
+    noSpeechSynth();
+    // modalSpeechSynth Error
+    function noSpeechSynth() {
+        modalSpeech.style.display = "block";
+        document.body.classList.add("disabled-overflow");
+    }
+    btnAudio.innerHTML = "🔇";
     btnAudio.classList.add("disabled-audio");
 }
 
