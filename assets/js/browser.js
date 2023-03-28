@@ -1,4 +1,4 @@
-/* jshint esversion: 8 */
+/* jshint esversion: 11 */
 
 // concept from Sean Murphy (CI alumnus)
 const by = Object.freeze({

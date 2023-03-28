@@ -1,4 +1,4 @@
-/* jshint esversion: 8 */
+/* jshint esversion: 11 */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -652,7 +652,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnScoreboard.addEventListener("click", () => {
         modalScoreboard.style.display = "block";
         document.body.classList.add("disabled-overflow");
-        resetGame();
     });
     // close modals
     modalClose.forEach((close) => {
