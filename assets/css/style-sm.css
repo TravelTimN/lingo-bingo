@@ -269,34 +269,46 @@ main {
             rgba(var(--blueL4), 1) 0.5em);
 }
 
-#user-board .inner {
+#user-board .inner,
+#ai-board .inner {
     position: relative;
-    width: var(--card);
-    height: var(--card);
     -webkit-transition: -webkit-transform 0.6s;
-            transition: -webkit-transform 0.6s;
-         -o-transition: transform 0.6s;
-            transition: transform 0.6s;
-            transition: transform 0.6s, -webkit-transform 0.6s;
+    transition: -webkit-transform 0.6s;
+    -o-transition: transform 0.6s;
+    transition: transform 0.6s;
+    transition: transform 0.6s, -webkit-transform 0.6s;
     -webkit-transform-style: preserve-3d;
-            transform-style: preserve-3d;
+    transform-style: preserve-3d;
 }
 
-#user-board .card .inner.flipped {
+#user-board .inner {
+    width: var(--card);
+    height: var(--card);
+}
+
+#user-board .card .inner.flipped,
+#ai-board .card .inner.flipped {
     -webkit-transform: rotateY(180deg); /* fixes Safari */
             transform: rotateY(180deg);
 }
 
 #user-board .front,
-#user-board .back {
+#user-board .back,
+#ai-board .front,
+#ai-board .back {
     position: absolute;
-    width: var(--card);
-    height: var(--card);
     -webkit-backface-visibility: hidden; /* fixes Safari */
-            backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
+#user-board .front,
 #user-board .back {
+    width: var(--card);
+    height: var(--card);
+}
+
+#user-board .back,
+#ai-board .back {
     display: -ms-grid;
     display: grid;
     -webkit-box-align: center;
@@ -304,8 +316,11 @@ main {
           align-items: center;
     -webkit-transform: rotateY(180deg);
             transform: rotateY(180deg);
-    border-radius: var(--borderRadius);
     background-color: rgba(var(--white), 1);
+}
+        
+#user-board .back {
+    border-radius: var(--borderRadius);
     -webkit-box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
             box-shadow: 0 0 4px 1px rgba(var(--black), 0.75);
 }
@@ -503,6 +518,18 @@ main {
             rgba(var(--grey), 1) 1em);
 }
 
+#ai-board .inner,
+#ai-board .front,
+#ai-board .back {
+    width: calc(var(--card) / 2);
+    height: calc(var(--card) / 2);
+    border-radius: calc(var(--borderRadius) / 2);
+}
+
+#ai-board .back .emoji {
+    font-size: 5vw;
+}
+
 #ai-board .card.correct {
     background: -o-repeating-linear-gradient(45deg,
             rgba(var(--green), 1),
@@ -517,7 +544,7 @@ main {
 }
 
 /* ai won - blink winning cards */
-#ai-board .card.correct.winning-tiles {
+#ai-board .card.correct .back.winning-tiles {
     -webkit-animation: blinkAI 2s ease-out infinite;
             animation: blinkAI 2s ease-out infinite;
 }
@@ -810,36 +837,12 @@ main {
 
 /* ai won */
 @-webkit-keyframes blinkAI {
-    0%, 100% {background: repeating-linear-gradient(45deg,
-            rgba(var(--green), 1),
-            rgba(var(--green), 1)0 0.5em,
-            rgba(var(--yellowA2), 1) 0.5em,
-            rgba(var(--yellowA2), 1) 1em);}
-    50% {background: repeating-linear-gradient(45deg,
-            rgba(var(--green), 1),
-            rgba(var(--green), 1) 0.5em,
-            rgba(var(--greenL4), 1) 0.5em,
-            rgba(var(--greenL4), 1) 1em);}
+    0%, 100% {background-color: rgba(var(--yellowA2), 1);}
+    50% {background-color: rgba(var(--green), 1);}
 }
 @keyframes blinkAI {
-    0%, 100% {background: -o-repeating-linear-gradient(45deg,
-            rgba(var(--green), 1),
-            rgba(var(--green), 1)0 0.5em,
-            rgba(var(--yellowA2), 1) 0.5em,
-            rgba(var(--yellowA2), 1) 1em);background: repeating-linear-gradient(45deg,
-            rgba(var(--green), 1),
-            rgba(var(--green), 1)0 0.5em,
-            rgba(var(--yellowA2), 1) 0.5em,
-            rgba(var(--yellowA2), 1) 1em);}
-    50% {background: -o-repeating-linear-gradient(45deg,
-            rgba(var(--green), 1),
-            rgba(var(--green), 1) 0.5em,
-            rgba(var(--greenL4), 1) 0.5em,
-            rgba(var(--greenL4), 1) 1em);background: repeating-linear-gradient(45deg,
-            rgba(var(--green), 1),
-            rgba(var(--green), 1) 0.5em,
-            rgba(var(--greenL4), 1) 0.5em,
-            rgba(var(--greenL4), 1) 1em);}
+    0%, 100% {background-color: rgba(var(--yellowA2), 1);}
+    50% {background-color: rgba(var(--green), 1);}
 }
 
 /* modal animations */
