@@ -564,6 +564,8 @@ main {
 }
 
 .modal-container {
+    display: flex;
+    flex-direction: column;
     cursor: default;
     position: relative;
     border-radius: var(--borderRadius);
@@ -589,7 +591,6 @@ main {
     letter-spacing: 0.25em;
     text-align: center;
     text-shadow: 2px 2px 2px rgba(var(--black), 0.5);
-    height: 10%;
 }
 
 .modal-body:not(.speech-synth) {
@@ -601,7 +602,7 @@ main {
 .modal-body {
     overflow-y: scroll;
     margin: 0 0.5em;
-    height: 80%;
+    flex: 1;
     border-radius: var(--borderRadius);
     background-color: rgba(var(--greyL5), 1);
     color: rgba(var(--black), 1);
@@ -620,7 +621,8 @@ main {
     display: grid;
     -ms-flex-line-pack: center;
          align-content: center;
-    height: 10%;
+    max-height: 10%;
+    width: 100%;
     padding: 5px;
     border-bottom-left-radius: var(--borderRadius);
     border-bottom-right-radius: var(--borderRadius);
@@ -706,6 +708,26 @@ main {
     cursor: pointer;
 }
 
+#modal-scoreboard #flag-selection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    background-color: rgba(var(--blue), 1);
+    padding: 0.5em 0;
+    margin: 0 5px;
+}
+
+#modal-scoreboard #flag-selection img.flag {
+    width: 2em;
+    border-radius: 0;
+    margin: 5px;
+}
+
 #modal-scoreboard table {
     cursor: default;
     width: 100%;
@@ -722,6 +744,10 @@ main {
     line-height: 2;
     text-transform: uppercase;
     text-shadow: 2px 2px 4px rgba(var(--black), 1);
+}
+
+#modal-scoreboard table tbody tr {
+    scroll-margin-top: 50px;
 }
 
 #modal-scoreboard table thead tr th:not(:last-child) {
