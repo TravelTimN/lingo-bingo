@@ -58,6 +58,23 @@ document.addEventListener("DOMContentLoaded", () => {
     generateScoreboard();
     function generateScoreboard() {
         languages.forEach((btnLang) => {
+            // generate flag for each language, clickable for easy scrolling
+            let flagSelection = by.id("flag-selection");
+            flagSelection.innerHTML += `<a href="#${btnLang}" class="flag-group"><img src="assets/svg/${btnLang}.svg" alt="${btnLang} flag" class="flag"></a>`;
+            // ignore octothorp (#) when clicking
+            let anchors = by.queryAll("a.flag-group");
+            anchors.forEach(anchor => {
+                anchor.addEventListener("click", function (e) {
+                    if (this.hash !== "") {
+                        e.preventDefault();
+                        let langId = this.hash.replace("#", "");
+                        let firstLangGame = by.queryAll(`[id^="${langId}"]`)[0];
+                        // smooth scroll into view with offset (plus CSS scroll-margin-top)
+                        let langOffset = firstLangGame.getBoundingClientRect().top + window.scrollY;
+                        firstLangGame.scrollIntoView({behavior: "smooth", top: langOffset});
+                    }
+                });
+            });
             games.forEach((btnGame) => {
                 // get localStorage information per game
                 langGame = `${btnLang}${btnGame}`;
