@@ -96,6 +96,11 @@
     #user-board .back .emoji {
         font-size: 7vw;
     }
+
+    /* GRID: AI BOARD */
+    #ai-board .back .emoji {
+        font-size: 3.5vw;
+    }
     
 
     /* STATS */

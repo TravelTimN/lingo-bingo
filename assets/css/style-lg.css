@@ -19,6 +19,11 @@
         font-size: 6vw;
     }
 
+    /* AI GRID / BOARD */
+    #ai-board .back .emoji {
+        font-size: 3vw;
+    }
+
     /* MODALS */
     #modal-settings table {
         border-spacing: 0 1em;

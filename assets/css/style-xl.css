@@ -6,4 +6,14 @@
     /* GLOBAL SETTINGS */
     body {font-size: 1.25em;}
 
+    /* USER GRID / BOARD */
+    #user-board .back .emoji {
+        font-size: 5vw;
+    }
+
+    /* AI GRID / BOARD */
+    #ai-board .back .emoji {
+        font-size: 2.5vw;
+    }
+
 }
