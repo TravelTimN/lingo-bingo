@@ -254,7 +254,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 aiWon = true; // AI has won! trigger losing function
                 userWon = false;
                 // add blinking effect to the tiles that won
-                cardsToCheck.forEach((card) => card.classList.add("winning-tiles"));
+                cardsToCheck.forEach((card) => {
+                    card.firstElementChild.classList.add("flipped");
+                    card.firstElementChild.lastElementChild.classList.add("winning-tiles");
+                });
                 break;
         }
         stopGame(); // we have a winner! stop the game
@@ -454,11 +457,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // reset all cards (user, ai, goal)
     function resetCards() {
-        cardsToReset = by.queryAll("#user-board .card .inner .back .emoji, #ai-board .card, #goal-board .card");
+        cardsToReset = by.queryAll("#user-board .card, #ai-board .card, #goal-board .card");
         cardsToReset.forEach((card) => {
-            card.parentNode.parentNode.classList.remove("flipped"); // un-flip user cards
-            card.parentNode.classList.remove("correct", "winning-tiles"); // user cards
-            card.classList.remove("correct", "winning-tiles"); // ai and goal cards
+            if (card.firstChild) {
+                // #user-board && #ai-board
+                card.firstElementChild.classList.remove("flipped"); // un-flip cards
+                card.firstElementChild.lastElementChild.classList.remove("correct", "winning-tiles"); // user board
+                card.classList.remove("correct", "winning-tiles"); // ai board
+            } else {
+                // #goal-board
+                card.classList.remove("correct");
+            }
         });
     }
 
@@ -496,9 +505,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let i = 0;
         cards.forEach((card) => {
             // use emoji in HTML: https://www.kirupa.com/html5/emoji.htm
-            if (grid === "#user-board .card .inner .back .emoji") {
-                card.innerText = String.fromCodePoint(array[i].emoji.replace("U+", "0x"));
-            }
+            card.innerText = String.fromCodePoint(array[i].emoji.replace("U+", "0x"));
             card.setAttribute("role", "img");
             card.setAttribute("aria-label", array[i].aria);
             card.setAttribute("data-emoji", array[i].word);
