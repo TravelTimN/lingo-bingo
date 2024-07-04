@@ -1,4 +1,6 @@
-let allCards = [
+/* jshint esversion: 11 */
+
+window.allCards = [
     {
         "word": "airplane",
         "emoji": "U+2708",

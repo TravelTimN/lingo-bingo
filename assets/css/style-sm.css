@@ -150,7 +150,8 @@ nav {
     display: grid;
     grid-area: nav;
     -ms-grid-columns: (1fr)[4];
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    /* grid-template-columns: repeat(4, 1fr); */ /* TODO: should be 4 columns once "about modal" implemented */
     background-color: rgba(var(--blue), 0.5);
     background: -webkit-gradient(linear,
                 left top, right top,
