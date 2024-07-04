@@ -69,6 +69,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         e.preventDefault();
                         let langId = this.hash.replace("#", "");
                         let firstLangGame = by.queryAll(`[id^="${langId}"]`)[0];
+                        let scoreboardRows = by.queryAll(".scoreboard-row");
+                        scoreboardRows.forEach(row => {
+                            row.classList.remove("hide");
+                            if (row.dataset.lang != langId) {
+                                row.classList.add("hide");
+                            }
+                        });
                         // smooth scroll into view with offset (plus CSS scroll-margin-top)
                         let langOffset = firstLangGame.getBoundingClientRect().top + window.scrollY;
                         firstLangGame.scrollIntoView({behavior: "smooth", top: langOffset});
@@ -91,6 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 let br = document.createElement("br");
                 let tr = tbody.insertRow();
                 tr.id = `${btnLang}${btnGame}`;
+                tr.classList.add(`scoreboard-row`);
+                tr.dataset.lang = btnLang;
                 // cell: flag + game
                 let td0 = tr.insertCell(0);
                 let flagEl = document.createElement("img");
