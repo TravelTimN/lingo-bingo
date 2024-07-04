@@ -676,6 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnScoreboard.addEventListener("click", () => {
         modalScoreboard.style.display = "block";
         document.body.classList.add("disabled-overflow");
+        resetGame();
     });
     // close modals
     modalClose.forEach((close) => {
