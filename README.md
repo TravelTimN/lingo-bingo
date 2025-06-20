@@ -3,3 +3,10 @@
 ---
 
 # lingo-bingo
+
+
+## Credits
+
+### Content
+
+- [Multi-Language Translator](https://smodin.io/translate-one-text-into-multiple-languages)
